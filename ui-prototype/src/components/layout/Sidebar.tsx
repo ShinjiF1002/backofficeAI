@@ -8,11 +8,11 @@ type NavEntry =
   | { type: 'separator' }
 
 const navItems: NavEntry[] = [
-  { type: 'link', to: '/overview', label: '概要', icon: Info, roles: ['staff', 'manager'] },
+  { type: 'link', to: '/', label: '概要', icon: Info, roles: ['staff', 'manager'] },
   { type: 'link', to: '/how-it-works', label: 'How it works', icon: Cog, roles: ['staff', 'manager'] },
   { type: 'link', to: '/repository', label: 'リポジトリ構成', icon: FolderTree, roles: ['staff', 'manager'] },
   { type: 'separator' },
-  { type: 'link', to: '/', label: 'ホーム', icon: Home, roles: ['staff', 'manager'] },
+  { type: 'link', to: '/home', label: 'ホーム', icon: Home, roles: ['staff', 'manager'] },
   { type: 'link', to: '/proposals', label: '変更提案', icon: FileText, roles: ['manager'] },
   { type: 'link', to: '/learning', label: '学習状況', icon: BarChart3, roles: ['manager'] },
   { type: 'link', to: '/upgrade', label: '信頼レベル昇格', icon: ShieldCheck, roles: ['manager'] },

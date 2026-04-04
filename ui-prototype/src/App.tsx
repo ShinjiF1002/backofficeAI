@@ -17,10 +17,10 @@ export default function App() {
       <AppProvider>
         <Routes>
           <Route element={<AppLayout />}>
-            <Route path="/overview" element={<OverviewPage />} />
+            <Route path="/" element={<OverviewPage />} />
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/repository" element={<RepositoryPage />} />
-            <Route path="/" element={<HomePage />} />
+            <Route path="/home" element={<HomePage />} />
             <Route path="/tasks/:id" element={<ExecuteReviewPage />} />
             <Route path="/tasks/:id/comment" element={<CommentPage />} />
             <Route path="/proposals" element={<ProposalReviewPage />} />

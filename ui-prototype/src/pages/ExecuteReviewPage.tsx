@@ -18,7 +18,7 @@ export default function ExecuteReviewPage() {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-4">
         <p className="text-muted-foreground">案件が見つかりません: {id}</p>
-        <Button variant="outline" onClick={() => navigate('/')}>ホームに戻る</Button>
+        <Button variant="outline" onClick={() => navigate('/home')}>ホームに戻る</Button>
       </div>
     )
   }
@@ -28,7 +28,7 @@ export default function ExecuteReviewPage() {
 
   const handleApprove = () => {
     approveTask(task.id)
-    navigate('/')
+    navigate('/home')
   }
 
   const handleSendBack = () => {
@@ -39,7 +39,7 @@ export default function ExecuteReviewPage() {
     <div className="space-y-8 max-w-4xl">
       <div>
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <Button variant="ghost" size="sm" onClick={() => navigate('/')}>← 戻る</Button>
+          <Button variant="ghost" size="sm" onClick={() => navigate('/home')}>← 戻る</Button>
           <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">{task.id}</h1>
           <Badge variant="secondary">{task.workflowName}</Badge>
         </div>

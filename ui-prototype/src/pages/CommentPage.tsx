@@ -21,7 +21,7 @@ export default function CommentPage() {
     return (
       <div className="flex flex-col items-center justify-center h-64 gap-4">
         <p className="text-muted-foreground">案件が見つかりません: {id}</p>
-        <Button variant="outline" onClick={() => navigate('/')}>ホームに戻る</Button>
+        <Button variant="outline" onClick={() => navigate('/home')}>ホームに戻る</Button>
       </div>
     )
   }
@@ -34,7 +34,7 @@ export default function CommentPage() {
 
   const handleSubmit = () => {
     sendBackTask(task.id)
-    navigate('/')
+    navigate('/home')
   }
 
   return (
