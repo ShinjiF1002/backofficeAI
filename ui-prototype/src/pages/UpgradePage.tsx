@@ -62,7 +62,7 @@ export default function UpgradePage() {
         </Card>
 
         <div className="flex flex-wrap gap-2 sm:gap-3">
-          <Button className="h-10 md:h-8" onClick={() => navigate('/')}>ホームに戻る</Button>
+          <Button className="h-10 md:h-8" onClick={() => navigate('/home')}>ホームに戻る</Button>
           <Button variant="outline" className="h-10 md:h-8" onClick={() => navigate('/learning')}>学習状況を確認</Button>
         </div>
       </div>
