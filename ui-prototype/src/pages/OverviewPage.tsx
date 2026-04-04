@@ -1,6 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Server, ShieldCheck, FileText, TrendingUp, AlertTriangle, ArrowRight, FolderTree } from 'lucide-react'
+import { Server, ShieldCheck, FileText, TrendingUp, AlertTriangle, ArrowRight, FolderTree, BookOpen } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
+import architectureDoc from '../../../docs/architecture.md?raw'
 
 export default function OverviewPage() {
   return (
@@ -182,6 +185,67 @@ export default function OverviewPage() {
 └── docs/                 # ドキュメント`}
             </pre>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* アーキテクチャ設計書（全文） */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <BookOpen className="h-5 w-5 text-muted-foreground" />
+            アーキテクチャ設計書
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <article className="max-w-none">
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                h1: ({ children }) => <h1 className="text-2xl font-semibold tracking-tight mt-0 mb-4">{children}</h1>,
+                h2: ({ children }) => <h2 className="text-xl font-semibold tracking-tight mt-8 mb-3 border-b pb-2">{children}</h2>,
+                h3: ({ children }) => <h3 className="text-base font-semibold tracking-tight mt-6 mb-2">{children}</h3>,
+                h4: ({ children }) => <h4 className="text-sm font-semibold tracking-tight mt-4 mb-2">{children}</h4>,
+                p: ({ children }) => <p className="text-sm leading-relaxed my-3">{children}</p>,
+                ul: ({ children }) => <ul className="list-disc list-outside pl-5 my-3 space-y-1">{children}</ul>,
+                ol: ({ children }) => <ol className="list-decimal list-outside pl-5 my-3 space-y-1">{children}</ol>,
+                li: ({ children }) => <li className="text-sm leading-relaxed">{children}</li>,
+                strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                em: ({ children }) => <em className="italic">{children}</em>,
+                a: ({ children, href }) => (
+                  <a href={href} target="_blank" rel="noreferrer" className="text-primary hover:underline">
+                    {children}
+                  </a>
+                ),
+                code: ({ children, ...props }) => {
+                  const isInline = !('data-language' in props) && typeof children === 'string' && !children.includes('\n')
+                  return isInline ? (
+                    <code className="text-xs bg-muted px-1 py-0.5 rounded font-mono">{children}</code>
+                  ) : (
+                    <code className="text-xs font-mono">{children}</code>
+                  )
+                },
+                pre: ({ children }) => (
+                  <pre className="text-xs bg-muted/50 border rounded-md p-3 my-3 overflow-x-auto whitespace-pre">{children}</pre>
+                ),
+                blockquote: ({ children }) => (
+                  <blockquote className="text-sm text-muted-foreground border-l-4 border-primary/50 pl-4 my-3 italic">
+                    {children}
+                  </blockquote>
+                ),
+                hr: () => <hr className="my-6 border-border" />,
+                table: ({ children }) => (
+                  <div className="my-4 overflow-x-auto">
+                    <table className="text-xs border-collapse w-full">{children}</table>
+                  </div>
+                ),
+                thead: ({ children }) => <thead className="bg-muted/50">{children}</thead>,
+                th: ({ children }) => <th className="font-semibold px-3 py-2 border text-left">{children}</th>,
+                td: ({ children }) => <td className="px-3 py-2 border align-top">{children}</td>,
+              }}
+            >
+              {architectureDoc}
+            </ReactMarkdown>
+          </article>
         </CardContent>
       </Card>
     </div>
