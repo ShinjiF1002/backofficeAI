@@ -1,0 +1,15 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Sensitive
+*.env
+credentials.*
+
+# Large files (screenshots are tracked via Git LFS in production)
+# runs/**/screenshots/*.png
+# runs/**/screenshots/*.jpg
