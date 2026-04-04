@@ -13,3 +13,7 @@ credentials.*
 # Large files (screenshots are tracked via Git LFS in production)
 # runs/**/screenshots/*.png
 # runs/**/screenshots/*.jpg
+
+# UI Prototype
+ui-prototype/node_modules/
+ui-prototype/dist/
