@@ -1,8 +1,6 @@
-import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useApp } from '@/context/AppContext'
 import StepProgress from '@/components/review/StepProgress'
-import ChecksList from '@/components/review/ChecksList'
 import DetailPanel from '@/components/review/DetailPanel'
 import CheckFailedAlert from '@/components/review/CheckFailedAlert'
 import ReviewActions from '@/components/review/ReviewActions'
@@ -14,7 +12,6 @@ export default function ExecuteReviewPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { tasks, approveTask } = useApp()
-  const [showDetail, setShowDetail] = useState(false)
 
   const task = tasks.find(t => t.id === id)
   if (!task) {
@@ -28,7 +25,6 @@ export default function ExecuteReviewPage() {
 
   const currentStep = task.steps.find(s => s.status === 'current')
   const hasFailedCheck = currentStep?.checks.some(c => c.status === 'ng') ?? false
-  const shouldShowDetail = showDetail || hasFailedCheck
 
   const handleApprove = () => {
     approveTask(task.id)
@@ -40,13 +36,16 @@ export default function ExecuteReviewPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8 max-w-4xl">
+      <div>
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="sm" onClick={() => navigate('/')}>← 戻る</Button>
           <h1 className="text-2xl font-semibold tracking-tight">{task.id}</h1>
           <Badge variant="secondary">{task.workflowName}</Badge>
         </div>
+        <p className="text-muted-foreground mt-1 ml-[68px]">
+          AIの実行結果を確認し、承認または差し戻しを判断してください。
+        </p>
       </div>
 
       <Card>
@@ -62,22 +61,8 @@ export default function ExecuteReviewPage() {
         <CheckFailedAlert checks={currentStep.checks} />
       )}
 
-      {shouldShowDetail ? (
-        <DetailPanel task={task} currentStep={currentStep!} />
-      ) : (
-        <Card>
-          <CardHeader className="pb-3">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-base">チェック通過</CardTitle>
-              <Button variant="link" size="sm" onClick={() => setShowDetail(true)}>
-                詳細を表示
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {currentStep && <ChecksList checks={currentStep.checks} />}
-          </CardContent>
-        </Card>
+      {currentStep && (
+        <DetailPanel task={task} currentStep={currentStep} />
       )}
 
       <ReviewActions

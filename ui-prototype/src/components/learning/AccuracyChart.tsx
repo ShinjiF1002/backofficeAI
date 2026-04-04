@@ -1,4 +1,4 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts'
 import type { WeeklyMetric } from '@/data/types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 
@@ -25,6 +25,12 @@ export default function AccuracyChart({ data }: AccuracyChartProps) {
                 formatter={(value) => [`${value}%`, '正答率']}
                 contentStyle={{ borderRadius: '8px', fontSize: '13px' }}
               />
+              <ReferenceLine
+                y={95}
+                stroke="hsl(25, 95%, 53%)"
+                strokeDasharray="6 3"
+                label={{ value: '昇格閾値 95%', position: 'insideTopRight', fontSize: 11, fill: 'hsl(25, 95%, 53%)' }}
+              />
               <Line
                 type="monotone"
                 dataKey="accuracy"
@@ -36,6 +42,9 @@ export default function AccuracyChart({ data }: AccuracyChartProps) {
             </LineChart>
           </ResponsiveContainer>
         </div>
+        <p className="text-xs text-muted-foreground mt-2">
+          12週間で 82% → 96% に向上。修正コメントの蓄積により安定した精度向上を実現。Week 8 以降は昇格閾値（95%）付近で安定推移。
+        </p>
       </CardContent>
     </Card>
   )

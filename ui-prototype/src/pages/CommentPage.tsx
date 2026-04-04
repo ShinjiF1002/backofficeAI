@@ -4,7 +4,10 @@ import { useApp } from '@/context/AppContext'
 import AiJudgmentDisplay from '@/components/comment/AiJudgmentDisplay'
 import CommentForm from '@/components/comment/CommentForm'
 import SimilarNote from '@/components/comment/SimilarNote'
+import ScreenshotPlaceholder from '@/components/review/ScreenshotPlaceholder'
+import ChecksList from '@/components/review/ChecksList'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { similarNotes } from '@/data/mockData'
 
 export default function CommentPage() {
@@ -23,6 +26,8 @@ export default function CommentPage() {
     )
   }
 
+  const currentStep = task.steps.find(s => s.status === 'current')
+
   const handleQuote = (text: string) => {
     setCommentText(prev => prev ? `${prev}\n${text}` : text)
   }
@@ -33,13 +38,47 @@ export default function CommentPage() {
   }
 
   return (
-    <div className="max-w-2xl space-y-6">
-      <div className="flex items-center gap-3">
-        <Button variant="ghost" size="sm" onClick={() => navigate(`/tasks/${task.id}`)}>← 戻る</Button>
-        <h1 className="text-2xl font-semibold tracking-tight">修正コメント</h1>
+    <div className="space-y-8 max-w-4xl">
+      <div>
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="sm" onClick={() => navigate(`/tasks/${task.id}`)}>← 戻る</Button>
+          <h1 className="text-2xl font-semibold tracking-tight">修正コメント</h1>
+        </div>
+        <p className="text-muted-foreground mt-1 ml-[68px]">
+          AIの判断に誤りがあった箇所と、正しい操作を記録してください。このコメントはナレッジとして蓄積されます。
+        </p>
       </div>
 
-      <AiJudgmentDisplay judgment={task.aiJudgment ?? '判断記録なし'} />
+      {/* Evidence context — screenshot + checks */}
+      <div className="grid grid-cols-2 gap-4">
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm">操作画面の状況</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ScreenshotPlaceholder
+              workflowName={task.workflowName}
+              stepName={currentStep?.name ?? ''}
+              hasError={currentStep?.checks.some(c => c.status === 'ng') ?? false}
+              size="compact"
+            />
+          </CardContent>
+        </Card>
+
+        <div className="space-y-4">
+          <AiJudgmentDisplay judgment={task.aiJudgment ?? '判断記録なし'} />
+          {currentStep && currentStep.checks.length > 0 && (
+            <Card>
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm">チェック結果</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ChecksList checks={currentStep.checks} />
+              </CardContent>
+            </Card>
+          )}
+        </div>
+      </div>
 
       <CommentForm
         value={commentText}
