@@ -38,7 +38,7 @@ export default function UpgradePage() {
             <CardTitle className="text-base">変更内容</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
               <div className="p-3 rounded-md bg-muted/50">
                 <p className="text-xs text-muted-foreground mb-1">変更前</p>
                 <p className="font-medium">{modeLabels[upgradeTarget.currentMode]}（{upgradeTarget.currentApprovals}回承認）</p>
@@ -61,9 +61,9 @@ export default function UpgradePage() {
           </CardContent>
         </Card>
 
-        <div className="flex gap-3">
-          <Button onClick={() => navigate('/')}>ホームに戻る</Button>
-          <Button variant="outline" onClick={() => navigate('/learning')}>学習状況を確認</Button>
+        <div className="flex flex-wrap gap-2 sm:gap-3">
+          <Button className="h-10 md:h-8" onClick={() => navigate('/')}>ホームに戻る</Button>
+          <Button variant="outline" className="h-10 md:h-8" onClick={() => navigate('/learning')}>学習状況を確認</Button>
         </div>
       </div>
     )
@@ -72,11 +72,11 @@ export default function UpgradePage() {
   return (
     <div className="space-y-8 max-w-4xl">
       <div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           <Button variant="ghost" size="sm" onClick={() => navigate('/learning')}>← 戻る</Button>
-          <h1 className="text-2xl font-semibold tracking-tight">信頼レベル昇格の確認</h1>
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">信頼レベル昇格の確認</h1>
         </div>
-        <p className="text-muted-foreground mt-1 ml-[68px]">
+        <p className="text-muted-foreground mt-2">
           AIの実績に基づいて、承認プロセスを効率化します。
         </p>
       </div>
@@ -141,7 +141,7 @@ export default function UpgradePage() {
           <CardTitle className="text-base">インパクトサマリー</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             {[
               { label: '承認回数', before: `${upgradeTarget.currentApprovals}回`, after: `${upgradeTarget.nextApprovals}回`, change: `${Math.round((1 - upgradeTarget.nextApprovals / upgradeTarget.currentApprovals) * 100)}%削減` },
               { label: '推定処理時間', before: '約15分', after: '約6分', change: '60%短縮' },
@@ -170,9 +170,9 @@ export default function UpgradePage() {
         </AlertDescription>
       </Alert>
 
-      <div className="flex gap-3 pt-2">
-        <Button onClick={approveUpgrade}>昇格を承認</Button>
-        <Button variant="outline" onClick={() => navigate('/learning')}>キャンセル</Button>
+      <div className="flex flex-wrap gap-2 sm:gap-3 pt-2">
+        <Button className="h-10 md:h-8" onClick={approveUpgrade}>昇格を承認</Button>
+        <Button variant="outline" className="h-10 md:h-8" onClick={() => navigate('/learning')}>キャンセル</Button>
       </div>
     </div>
   )

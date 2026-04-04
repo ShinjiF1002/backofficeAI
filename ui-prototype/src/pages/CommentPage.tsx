@@ -40,17 +40,17 @@ export default function CommentPage() {
   return (
     <div className="space-y-8 max-w-4xl">
       <div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           <Button variant="ghost" size="sm" onClick={() => navigate(`/tasks/${task.id}`)}>← 戻る</Button>
-          <h1 className="text-2xl font-semibold tracking-tight">修正コメント</h1>
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">修正コメント</h1>
         </div>
-        <p className="text-muted-foreground mt-1 ml-[68px]">
+        <p className="text-muted-foreground mt-2">
           AIの判断に誤りがあった箇所と、正しい操作を記録してください。このコメントはナレッジとして蓄積されます。
         </p>
       </div>
 
       {/* Evidence context — screenshot + checks */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm">操作画面の状況</CardTitle>
@@ -92,11 +92,11 @@ export default function CommentPage() {
         ))}
       </div>
 
-      <div className="flex gap-3 pt-2">
-        <Button onClick={handleSubmit} disabled={!commentText.trim()}>
+      <div className="flex flex-wrap gap-2 sm:gap-3 pt-2">
+        <Button className="h-10 md:h-8" onClick={handleSubmit} disabled={!commentText.trim()}>
           送信して続行
         </Button>
-        <Button variant="outline" onClick={() => navigate(`/tasks/${task.id}`)}>
+        <Button variant="outline" className="h-10 md:h-8" onClick={() => navigate(`/tasks/${task.id}`)}>
           キャンセル
         </Button>
       </div>

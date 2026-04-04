@@ -26,9 +26,9 @@ export default function ProposalCard({ proposal, onStatusChange }: ProposalCardP
   return (
     <Card className={isResolved ? 'opacity-60' : ''}>
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-2">
           <CardTitle className="text-base">提案 #{proposal.id}</CardTitle>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <Badge className={riskColors[proposal.riskLevel]}>
               リスク: {riskLabels[proposal.riskLevel]}
             </Badge>
@@ -59,19 +59,19 @@ export default function ProposalCard({ proposal, onStatusChange }: ProposalCardP
             <FileText className="h-3.5 w-3.5" />
             変更差分
           </p>
-          <div className="text-xs font-mono bg-red-50 text-red-700 px-2 py-1 rounded border border-red-200 line-through">
+          <div className="text-xs font-mono bg-red-50 text-red-700 px-2 py-1 rounded border border-red-200 line-through break-words">
             - 添付ファイルタブで証憑を確認
           </div>
-          <div className="text-xs font-mono bg-emerald-50 text-emerald-700 px-2 py-1 rounded border border-emerald-200">
+          <div className="text-xs font-mono bg-emerald-50 text-emerald-700 px-2 py-1 rounded border border-emerald-200 break-words">
             + 添付ファイルタブで証憑を確認
           </div>
-          <div className="text-xs font-mono bg-emerald-50 text-emerald-700 px-2 py-1 rounded border border-emerald-200">
+          <div className="text-xs font-mono bg-emerald-50 text-emerald-700 px-2 py-1 rounded border border-emerald-200 break-words">
             + PDFの場合はスクロールして全ページ確認が必要
           </div>
         </div>
 
         {/* Impact & expected effect */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div className="p-2.5 rounded-md bg-muted/50">
             <p className="text-xs text-muted-foreground font-medium mb-1">影響する手順</p>
             <div className="flex flex-wrap gap-1">
@@ -97,10 +97,10 @@ export default function ProposalCard({ proposal, onStatusChange }: ProposalCardP
           </p>
           <div className="space-y-1.5 pl-1">
             {proposal.voices.map((v, i) => (
-              <div key={i} className="text-sm flex gap-2 py-1 px-2 rounded bg-muted/30">
+              <div key={i} className="text-sm flex flex-wrap sm:flex-nowrap gap-x-2 gap-y-1 py-1 px-2 rounded bg-muted/30">
                 <span className="text-muted-foreground shrink-0 text-xs">{v.date}</span>
                 <span className="font-medium shrink-0 text-xs">{v.author}:</span>
-                <span className="text-muted-foreground text-xs">{v.text}</span>
+                <span className="text-muted-foreground text-xs min-w-0 break-words basis-full sm:basis-auto">{v.text}</span>
               </div>
             ))}
           </div>
@@ -119,14 +119,14 @@ export default function ProposalCard({ proposal, onStatusChange }: ProposalCardP
               />
             </div>
 
-            <div className="flex gap-2 pt-1">
-              <Button size="sm" onClick={() => onStatusChange(proposal.id, 'approved')}>
+            <div className="flex flex-wrap gap-2 pt-1">
+              <Button size="sm" className="h-9 md:h-7" onClick={() => onStatusChange(proposal.id, 'approved')}>
                 承認
               </Button>
-              <Button size="sm" variant="destructive" onClick={() => onStatusChange(proposal.id, 'rejected')}>
+              <Button size="sm" variant="destructive" className="h-9 md:h-7" onClick={() => onStatusChange(proposal.id, 'rejected')}>
                 却下
               </Button>
-              <Button size="sm" variant="secondary" onClick={() => onStatusChange(proposal.id, 'held')}>
+              <Button size="sm" variant="secondary" className="h-9 md:h-7" onClick={() => onStatusChange(proposal.id, 'held')}>
                 保留
               </Button>
             </div>

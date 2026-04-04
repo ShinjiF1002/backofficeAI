@@ -37,7 +37,7 @@ export default function HomePage() {
 
       <WarningBanner issue={repeatIssue} />
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <PendingQueue tasks={pending} />
         <RunningTasks tasks={running} />
       </div>
@@ -56,10 +56,10 @@ export default function HomePage() {
         <CardContent>
           <div className="space-y-2">
             {comments.slice(0, 4).map(c => (
-              <div key={c.id} className="flex items-start gap-3 py-2 border-b border-border last:border-0">
+              <div key={c.id} className="flex flex-wrap sm:flex-nowrap items-start gap-x-3 gap-y-1 py-2 border-b border-border last:border-0">
                 <span className="text-xs text-muted-foreground shrink-0 w-12">{c.date}</span>
-                <span className="text-xs font-medium shrink-0 w-24">{c.author}</span>
-                <span className="text-xs text-muted-foreground flex-1">{c.text}</span>
+                <span className="text-xs font-medium shrink-0 w-24 truncate">{c.author}</span>
+                <span className="text-xs text-muted-foreground flex-1 min-w-0 break-words basis-full sm:basis-auto">{c.text}</span>
                 <span className="text-[10px] text-muted-foreground/60 shrink-0">{c.stepName}</span>
               </div>
             ))}

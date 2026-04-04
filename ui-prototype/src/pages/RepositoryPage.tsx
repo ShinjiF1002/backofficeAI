@@ -59,7 +59,7 @@ export default function RepositoryPage() {
           </p>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-x-6 gap-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
 
             {/* manuals */}
             <FolderItem
@@ -186,7 +186,7 @@ export default function RepositoryPage() {
       </Card>
 
       {/* Tier Explanation */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
         <Card className="border-teal-200 bg-teal-50/30">
           <CardHeader className="pb-2">
             <CardTitle className="text-base flex items-center gap-2">

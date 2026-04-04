@@ -38,12 +38,12 @@ export default function ExecuteReviewPage() {
   return (
     <div className="space-y-8 max-w-4xl">
       <div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           <Button variant="ghost" size="sm" onClick={() => navigate('/')}>← 戻る</Button>
-          <h1 className="text-2xl font-semibold tracking-tight">{task.id}</h1>
+          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">{task.id}</h1>
           <Badge variant="secondary">{task.workflowName}</Badge>
         </div>
-        <p className="text-muted-foreground mt-1 ml-[68px]">
+        <p className="text-muted-foreground mt-2">
           AIの実行結果を確認し、承認または差し戻しを判断してください。
         </p>
       </div>

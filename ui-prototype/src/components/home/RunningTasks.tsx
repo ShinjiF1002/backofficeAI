@@ -23,16 +23,16 @@ export default function RunningTasks({ tasks }: RunningTasksProps) {
               const completedCount = task.steps.filter(s => s.status === 'completed').length
 
               return (
-                <div key={task.id} className="flex items-center justify-between py-2 px-3 rounded-md bg-muted/50">
-                  <div className="flex items-center gap-3">
-                    <span className="font-medium text-sm">{task.id}</span>
-                    <Badge variant="secondary" className="text-xs">
+                <div key={task.id} className="flex items-center justify-between gap-2 py-2 px-3 rounded-md bg-muted/50">
+                  <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                    <span className="font-medium text-sm shrink-0">{task.id}</span>
+                    <Badge variant="secondary" className="text-xs shrink-0">
                       {task.currentStepNum === 0
                         ? '待機中'
                         : `ステップ ${completedCount}/${total}`}
                     </Badge>
                   </div>
-                  <span className="text-sm text-muted-foreground">
+                  <span className="text-sm text-muted-foreground truncate">
                     {currentStep?.name ?? '待機中'}
                   </span>
                 </div>

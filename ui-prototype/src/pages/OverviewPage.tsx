@@ -30,7 +30,7 @@ export default function OverviewPage() {
       {/* Current Problems */}
       <div>
         <h2 className="text-base font-semibold mb-3">現状の課題</h2>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
           {[
             { icon: FileText, title: '定型作業に人手を割いている', desc: '送金・口座開設・請求書承認など' },
             { icon: AlertTriangle, title: '退職・異動でノウハウが流出', desc: '暗黙知が属人化' },
@@ -55,7 +55,7 @@ export default function OverviewPage() {
       {/* Solution */}
       <div>
         <h2 className="text-base font-semibold mb-3">本提案のアプローチ</h2>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
           {[
             { icon: Server, title: 'AIが同じ画面を同じ手順で操作', desc: '既存システム改修不要', color: 'text-emerald-500' },
             { icon: ShieldCheck, title: 'ナレッジが組織に蓄積', desc: '退職しても失われない', color: 'text-blue-500' },
@@ -78,7 +78,7 @@ export default function OverviewPage() {
           <CardTitle className="text-lg">安全設計の4原則</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {[
               { title: 'データは社外に出ない', desc: 'AI基盤を自社クラウドテナントにホスト。データ通信はすべて社内で完結。' },
               { title: 'すべての変更は人間が承認', desc: '手順の修正もチェックルールの追加も、必ず人間のレビューと承認が必要。' },
@@ -103,7 +103,7 @@ export default function OverviewPage() {
           <CardTitle className="text-lg">従来のRPAとの違い</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 gap-4 text-sm">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
             <div className="p-3 rounded-md bg-muted/50">
               <Badge variant="secondary" className="mb-2">RPA</Badge>
               <ul className="space-y-1 text-xs text-muted-foreground">

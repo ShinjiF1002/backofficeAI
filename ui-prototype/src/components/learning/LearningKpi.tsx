@@ -17,7 +17,7 @@ export default function LearningKpi({ total, accuracy, knowledge }: LearningKpiP
   const values = { total, accuracy, knowledge }
 
   return (
-    <div className="grid grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
       {kpis.map(kpi => {
         const value = values[kpi.key]
         const isAccuracy = kpi.key === 'accuracy'

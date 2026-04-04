@@ -19,7 +19,7 @@ export default function KpiCards({ pending, done, running, accuracy }: KpiCardsP
   const values = { pending, done, running, accuracy }
 
   return (
-    <div className="grid grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
       {kpis.map(kpi => {
         const value = values[kpi.key]
         const isAccuracy = kpi.key === 'accuracy'

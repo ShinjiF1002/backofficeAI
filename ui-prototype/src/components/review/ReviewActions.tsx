@@ -17,14 +17,14 @@ export default function ReviewActions({
 }: ReviewActionsProps) {
   if (hasFailedCheck) {
     return (
-      <div className="flex gap-3">
-        <Button variant="outline" onClick={onManualContinue ?? onApprove}>
+      <div className="flex flex-wrap gap-2 sm:gap-3">
+        <Button variant="outline" className="h-10 md:h-8" onClick={onManualContinue ?? onApprove}>
           手動で続行
         </Button>
-        <Button variant="destructive" onClick={onSendBack}>
+        <Button variant="destructive" className="h-10 md:h-8" onClick={onSendBack}>
           差し戻し
         </Button>
-        <Button variant="secondary" onClick={onHold ?? onSendBack}>
+        <Button variant="secondary" className="h-10 md:h-8" onClick={onHold ?? onSendBack}>
           保留
         </Button>
       </div>
@@ -32,11 +32,11 @@ export default function ReviewActions({
   }
 
   return (
-    <div className="flex gap-3">
-      <Button onClick={onApprove}>
+    <div className="flex flex-wrap gap-2 sm:gap-3">
+      <Button className="h-10 md:h-8" onClick={onApprove}>
         承認して次へ
       </Button>
-      <Button variant="outline" onClick={onSendBack}>
+      <Button variant="outline" className="h-10 md:h-8" onClick={onSendBack}>
         差し戻し
       </Button>
     </div>

@@ -15,7 +15,7 @@ interface UpgradeDetailProps {
 
 export default function UpgradeDetail({ reason, safety, keepHuman, autoRun }: UpgradeDetailProps) {
   return (
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2">
@@ -58,7 +58,7 @@ export default function UpgradeDetail({ reason, safety, keepHuman, autoRun }: Up
         </CardContent>
       </Card>
 
-      <Card className="col-span-2">
+      <Card className="md:col-span-2">
         <CardContent className="py-3 flex items-center gap-2 text-sm">
           <AlertTriangle className="h-4 w-4 text-amber-500 shrink-0" />
           <span className="text-muted-foreground font-medium">安全装置:</span>

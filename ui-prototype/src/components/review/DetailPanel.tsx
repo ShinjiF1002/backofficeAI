@@ -30,7 +30,7 @@ export default function DetailPanel({ task, currentStep }: DetailPanelProps) {
       </Card>
 
       {/* AI judgment + checks + knowledge — 2-column grid below */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card>
           <CardHeader className="pb-2">
             <CardTitle className="text-sm">AI判断</CardTitle>

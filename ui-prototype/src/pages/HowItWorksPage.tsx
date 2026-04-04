@@ -16,7 +16,7 @@ export default function HowItWorksPage() {
           <CardTitle className="text-lg">基本サイクル</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {[
               { step: '1', icon: BookOpen, title: 'マニュアルを読み込む', desc: '既存の業務マニュアルをAIが解析し、操作手順を構造化', color: 'bg-blue-50 border-blue-200' },
               { step: '2', icon: Brain, title: 'AIが業務を実行', desc: '担当者と同じPC・同じアプリで画面操作', color: 'bg-violet-50 border-violet-200' },
@@ -121,7 +121,7 @@ export default function HowItWorksPage() {
             ))}
 
             {/* Two paths */}
-            <div className="grid grid-cols-2 gap-3 mt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
               <div className="p-3 rounded-lg border border-teal-200 bg-teal-50">
                 <p className="text-sm font-medium text-teal-700">知見として蓄積（Tier 1）</p>
                 <p className="text-xs text-muted-foreground mt-1">全エージェントに即時共有</p>
@@ -145,7 +145,7 @@ export default function HowItWorksPage() {
           <CardTitle className="text-lg">段階的な自律化 — 信頼レベルの昇格</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             {[
               {
                 title: '全ステップ承認',
@@ -210,7 +210,7 @@ export default function HowItWorksPage() {
           <CardTitle className="text-lg">POC実施計画</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             {[
               {
                 phase: 'Phase 1',
@@ -246,7 +246,7 @@ export default function HowItWorksPage() {
             ))}
           </div>
 
-          <div className="mt-4 flex gap-3 justify-center">
+          <div className="mt-4 flex flex-wrap gap-2 justify-center">
             {['自動化率', '処理精度', '介入頻度', '処理時間', 'AI運用コスト'].map(metric => (
               <Badge key={metric} variant="secondary" className="text-xs">{metric}</Badge>
             ))}
