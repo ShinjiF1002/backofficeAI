@@ -7,7 +7,7 @@ import type {
 export const users: User[] = [
   { id: 'u1', name: 'Taro Tanaka', team: 'Finance', role: 'staff' },
   { id: 'u2', name: 'Yuki Sato', team: 'Finance', role: 'staff' },
-  { id: 'u3', name: 'Kenji Yamada', team: 'Finance', role: 'manager' },
+  { id: 'u3', name: 'Shinji Fujiwara', team: 'Finance', role: 'manager' },
 ]
 
 // ── Workflows ──
