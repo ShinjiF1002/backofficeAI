@@ -6,15 +6,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 AIによるバックオフィスオペレーション自動化フレームワーク。Claude Desktop (computer use) を活用し、バックオフィス担当者のPC上で定型業務を自動化する。
 
-This is a **specification and data repository** — no runnable code, build system, or package manager exists yet. The repo contains architectural specs, directory scaffolding, and will be populated with procedures, knowledge, and agent configs.
+This repo is primarily a **specification and data repository** (procedures, guardrails, knowledge, proposals — currently scaffolding only). The one runnable piece is `ui-prototype/`, a React SPA that mocks the management interface and is deployed to GitHub Pages on every push to `main`.
 
 ## Key Documents
 
 - `docs/architecture.md` — Full technical spec (tier model, procedure schemas, knowledge pipeline, agent architecture, bootstrap process)
-- `docs/ui-prototype.md` — Management interface mockups and approval workflow (ASCII art screens)
+- `docs/ui-prototype.md` — Management interface mockups, approval workflow, and responsive/mobile design spec (ASCII art screens)
 - `knowledge/error_taxonomy.md` — 5-category feedback classification that routes corrections to the right tier
 
-## Architecture
+## Domain Architecture
 
 ### Two-Tier Data Model
 
@@ -35,7 +35,7 @@ Procedures graduate: **supervised** (all steps approved) → **checkpoint** (fla
 2. **hints** — UI navigation helpers (may become outdated)
 3. **checkpoint** flags — where human approval is required
 
-## File Conventions
+## File Conventions (Spec Data)
 
 - Index files (`_index.md`) in `procedures/`, `guardrails/`, `knowledge/compiled/` are auto-generated with `<!-- auto-generated -->` comment
 - Procedure definitions: `{domain}/{name}.md` (human-readable) + `{domain}/{name}.schema.yaml` (machine-readable)
@@ -44,7 +44,55 @@ Procedures graduate: **supervised** (all steps approved) → **checkpoint** (fla
 - Corrections: `{timestamp}_{procedure}_{run_id}.md`
 - Runs: `runs/{YYYY-MM}/{run_id}/` containing plan, execution log, screenshots, approval, feedback
 
-## Bootstrap Process (Not Yet Started)
+## ui-prototype/ (React SPA)
+
+Working directory for all commands: `ui-prototype/`.
+
+```bash
+npm install          # install deps
+npm run dev          # Vite dev server (HMR)
+npm run build        # tsc -b && vite build → dist/
+npm run lint         # eslint .
+npm run preview      # serve built dist/
+```
+
+### Stack
+
+React 19, Vite 8, TypeScript, Tailwind v4 (via `@tailwindcss/vite`; no typography plugin — write explicit classes), shadcn/ui components, react-router-dom v7, lucide-react icons, recharts. Markdown rendered with `react-markdown` + `remark-gfm`.
+
+### Routing
+
+Router `basename` is `/backofficeAI/` (matches GitHub Pages project URL). Key routes in `src/App.tsx`:
+
+- `/` → `OverviewPage` (project pitch — landing page)
+- `/home` → `HomePage` (operator daily dashboard)
+- `/how-it-works`, `/repository` — marketing/info pages
+- `/tasks/:id`, `/tasks/:id/comment` — operator approval flow
+- `/proposals`, `/learning`, `/upgrade` — manager pages
+
+"Back to home" buttons across the app navigate to `/home` (operator dashboard), **not** `/` (Overview).
+
+### State
+
+Global state via `src/context/AppContext.tsx`; all data is mock data from `src/data/`. `currentRole` defaults to `manager` so all sidebar links render (role toggle UI was intentionally removed from `TopBar`).
+
+### Architecture doc embed
+
+`OverviewPage` imports `../../../docs/architecture.md?raw` and renders it with `ReactMarkdown` (custom `components` prop for per-element Tailwind styling since Tailwind v4 `prose` classes are unavailable). Updates to `docs/architecture.md` flow through automatically on next build.
+
+## Deployment
+
+GitHub Pages is configured with Source = "GitHub Actions". The only Pages workflow is `.github/workflows/deploy.yml`:
+
+1. Runs on push to `main` (and `workflow_dispatch`)
+2. `cd ui-prototype`, `npm ci`, `npm run build`
+3. Uploads `ui-prototype/dist/` as the Pages artifact
+
+**Important**: `npm ci` fails hard on lockfile drift. If you add/update deps, always re-run `npm install` so `package-lock.json` stays in sync before pushing.
+
+Live site: `https://shinjif1002.github.io/backofficeAI/`
+
+## Bootstrap Process (Spec Side, Not Yet Started)
 
 1. Import manuals into `manuals/raw/`, LLM structures them into `manuals/parsed/`
 2. Generate procedure drafts, batch human review via proposals
