@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Server, ShieldCheck, FileText, TrendingUp, AlertTriangle, ArrowRight } from 'lucide-react'
+import { Server, ShieldCheck, FileText, TrendingUp, AlertTriangle, ArrowRight, FolderTree } from 'lucide-react'
 
 export default function OverviewPage() {
   return (
@@ -126,6 +126,62 @@ export default function OverviewPage() {
           <p className="text-xs text-muted-foreground mt-3">
             両者は補完関係。業務の特性に応じた使い分けをPOCで検討します。
           </p>
+        </CardContent>
+      </Card>
+
+      {/* 詳細 (README) */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center gap-2">
+            <FolderTree className="h-5 w-5 text-muted-foreground" />
+            詳細
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4 text-sm leading-relaxed">
+          <div>
+            <h3 className="font-semibold mb-1">backoffice-automation-framework</h3>
+            <p className="text-muted-foreground">AIによるバックオフィスオペレーション自動化フレームワーク。</p>
+            <p className="text-muted-foreground mt-1">
+              Claude Desktop Use を活用し、バックオフィス担当者のPC上で定型業務を自動化する仕組みを提供します。
+            </p>
+          </div>
+
+          <div>
+            <h3 className="font-semibold mb-2">ドキュメント</h3>
+            <ul className="list-disc list-inside text-muted-foreground">
+              <li>
+                <a
+                  href="https://github.com/ShinjiF1002/backofficeAI/blob/main/docs/architecture.md"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  アーキテクチャ設計書
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-semibold mb-2">ディレクトリ構成</h3>
+            <pre className="text-xs bg-muted/50 p-3 rounded-md overflow-x-auto whitespace-pre font-mono">
+{`backoffice-automation-framework/
+├── manuals/              # 業務マニュアル（raw: 原本, parsed: LLM構造化済み）
+├── procedures/           # [Tier 2] 実行可能手順定義（人間レビュー必須）
+├── guardrails/           # [Tier 2] バリデーションルール（人間レビュー必須）
+├── knowledge/            # [Tier 1] ナレッジベース（リアルタイム反映）
+│   ├── corrections/      # ユーザ修正コメント（raw）
+│   ├── staging/          # 未検証ナレッジ
+│   ├── compiled/         # 検証済みナレッジ
+│   └── edge_cases/       # エッジケース集
+├── proposals/            # Procedure/Guardrail変更提案キュー
+├── agents/               # エージェント定義（configs, prompts, tools）
+├── runs/                 # 実行記録（全件保存、スクリーンショット含む）
+├── evaluation/           # 品質追跡（metrics, reports, regression）
+├── lint/                 # ナレッジベース健全性チェック
+└── docs/                 # ドキュメント`}
+            </pre>
+          </div>
         </CardContent>
       </Card>
     </div>
