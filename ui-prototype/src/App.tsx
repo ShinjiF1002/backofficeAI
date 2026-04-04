@@ -13,7 +13,7 @@ import RepositoryPage from '@/pages/RepositoryPage'
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={import.meta.env.BASE_URL}>
       <AppProvider>
         <Routes>
           <Route element={<AppLayout />}>
