@@ -109,6 +109,18 @@ Router `basename` is `/backofficeAI/` (matches GitHub Pages project URL). Routes
 
 "Back to home" buttons across the app navigate to `/home` (operator dashboard), **not** `/` (Overview).
 
+### Mobile navigation
+
+`AppLayout` renders a fixed **BottomNav** (`md:hidden`, `z-40`) with 5 tabs: `ホーム`, `承認待ち` (→ `/home#pending` anchor), `変更提案`, `学習`, `メニュー` (opens the Sidebar drawer). It's **auto-hidden on `/tasks/:id*`** — those pages have sticky CTA bars (approve/send-back) that own the bottom of the screen in focused-task mode. The hide logic lives in `AppLayout.tsx` (`pathname.startsWith('/tasks/')`), which also drives `main`'s `pb-*`.
+
+**Sticky footer rule:** focused-task pages use `z-40` (matches BottomNav) and horizontal inset `-mx-4 md:-mx-6 xl:-mx-8` that must match `AppLayout`'s content padding (`px-4 md:px-6 xl:px-8`). Always include `pb-[max(0.75rem,env(safe-area-inset-bottom))]`.
+
+### Layout conventions
+
+- **Page max-width**: Dashboard pages fill 1280px (Home, Learning, Runs, Guardrails, Agents, Repository). Reading/form pages use `max-w-4xl` for ~36 JP chars per line (Overview, HowItWorks, Upgrade, Proposal, Execute, Comment).
+- **Grid breakpoints**: 3+ column grids must use `lg:` (1024px), never `sm:` or `md:` — JP text collapses in narrow 3-col layouts. 2-col grids may use `sm:`. HomePage's 3-col dashboard layout gates at `xl:` (1280px) because the left column needs ≥700px to avoid truncating `¥2,450,000 / 株式会社…` rows. Grep guard: `grep -rEn "(sm|md):grid-cols-[3-9]" src/pages` should return 0.
+- **JP label dictionaries** (`src/data/types.ts`): `trustModeLabels`, `errorCategoryLabels`, `guardrailSeverityLabels`, `riskLevelLabels`, `changeTypeLabels`, `categoryLabels`. **Never** render raw enum values (`'supervised'`, `'error'`, `'tier2'` etc.) to the UI — route through these maps. Status tones map to `StatusPillTone` via a local file-scoped `const severityTone: Record<..., StatusPillTone>` record.
+
 ### State
 
 Global state via `src/context/AppContext.tsx`; all data is mock data from `src/data/`. `currentRole` defaults to `manager` so all sidebar links render (role toggle UI was intentionally removed from `TopBar`). Staff-only views can be exercised by reading from `currentRole` but there is currently no UI entry point to switch roles.
@@ -150,26 +162,28 @@ Tokens live in `src/index.css` `:root` + `@theme inline`. Key tokens:
 ### Shared UI components (`src/components/shared/`)
 
 Reusable domain components used across multiple pages:
+- `PageHeader` — JP-safe H1 + optional subtitle (enforces `tracking-normal leading-[1.4]`). Used on 10 pages (`ExecuteReviewPage` intentionally keeps its breadcrumb + hero-card layout).
 - `FlywheelDiagram` — the 修正コメント → ナレッジ → 提案 → 承認済手順 learning loop (Overview, HowItWorks, Learning)
 - `POCPhaseBadge` — POC progress marker (strip + detailed variants)
 - `LearningStrip` — compact weekly learning banner on HomePage
 - `CategoryIcon` — per-procedure-category colored icon tile
 - `ConfidenceBadge` — 90%+/70-90%/<70% tri-color pill (delegates to `StatusPill`)
-- `KpiTile` — KPI card (icon + value + label + optional trend badge)
+- `KpiTile` — KPI card (icon + value + label + optional `children` slot for mini-viz)
 - `ListRowCard` — unified icon+title+subtitle+trailing row pattern
 - `CorrectionDiff` — before→after pill for correction timelines
 - `TrustModeBadge` — trust-mode label with locked semantic colors
 - `Num` — numeric wrapper forcing Inter + tabular-nums
 
-When a visual concept appears on more than one page, add it here rather than duplicating JSX.
+When a visual concept appears on more than one page, add it here rather than duplicating JSX. **One-off tint patterns stay inline**: pages that need `border-{tone}-200/60 bg-{tone}-50/40` tile tints declare a local `const tintClasses = { emerald: '...', amber: '...', ... } as const` at the top of the file — don't create a shared `InfoTile` component.
 
 ### Primitive variant conventions
 
 - `<Button>`: `variant="brand"` (gradient CTA) / `"brand-soft"` + `size="cta"` / `"tap"` for primary actions and mobile-safe paired bars. Never use raw `className="h-10 md:h-9"` — use `size="tap"`.
-- `<Card>`: `variant="default"` / `"featured"` (shadow-premium-md) / `"tinted"` (brand gradient bg) / `"interactive"` (hover-lift + cursor-pointer)
-- `<Alert>`: `variant="info"` / `"warning"` / `"success"` (plus existing `default`/`destructive`). **Never** add className color overrides to Alert.
-- `<StatusPill>` (in `ui/status-pill.tsx`): dot-prefixed semantic pill with `tone` prop
+- `<Card>`: `variant="default"` / `"featured"` (shadow-premium-md) / `"tinted"` (brand gradient bg, **primary tone only**) / `"interactive"` (hover-lift + cursor-pointer). `size="sm"` tightens internal padding/gap for dense lists of tiles. Non-primary tints use `<Card size="sm" className={tintClasses.emerald}>` (see Shared UI components).
+- `<Alert>`: `variant="info"` / `"warning"` / `"success"` (plus existing `default`/`destructive`). **Never** add className color overrides to Alert. Alert implies "something needs attention" — don't use it for explanatory content (use a tinted Card instead).
+- `<StatusPill>` (in `ui/status-pill.tsx`): dot-prefixed semantic pill with `tone` prop. Don't add `icon?` slots — if a chip needs an icon, render it inline next to StatusPill or use plain tinted span with matching tone tokens.
 - Prop-name disambiguation: Card uses `variant`, StatusPill uses `tone`, ListRowCard uses `accent`
+- **Button-selector a11y pattern** (CommentPage etc.): wrap a group of toggle `<button>` elements with `role="radiogroup" aria-label="..."` and set `role="radio" aria-checked={selected}` on each button. Don't reach for a `SelectableCard` abstraction.
 
 ### Architecture doc embed
 

@@ -52,7 +52,6 @@ export default function Sidebar({ onNavigate, variant = 'default' }: SidebarProp
         </div>
         <div className="flex flex-col leading-tight">
           <span className="font-semibold text-sm tracking-tight">Backoffice AI</span>
-          <span className="text-[10px] text-muted-foreground">AI 推進部</span>
         </div>
       </div>
       <nav className="flex flex-col gap-0.5">

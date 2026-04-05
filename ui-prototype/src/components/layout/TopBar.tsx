@@ -42,11 +42,10 @@ export default function TopBar({ onMenuClick }: TopBarProps) {
           )}
         </Button>
         <div className="h-6 w-[1px] bg-border shrink-0" aria-hidden />
-        <div className="flex items-center gap-2.5 min-w-0">
-          <div className="flex-col leading-tight text-right min-w-0 hidden sm:flex">
-            <span className="text-[13px] font-semibold truncate">{currentUser.name}</span>
-            <span className="text-[11px] text-muted-foreground">{currentUser.team}</span>
-          </div>
+        <div className="flex items-center gap-3 min-w-0">
+          <span className="text-sm font-semibold tracking-tight truncate hidden sm:inline leading-none">
+            {currentUser.name}
+          </span>
           <Avatar className="size-9 ring-2 ring-background shrink-0">
             <AvatarFallback className="text-xs font-medium bg-primary/10 text-primary">
               {currentUser.name.split(' ').map(n => n[0]).join('')}
