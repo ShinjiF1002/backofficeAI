@@ -1,0 +1,121 @@
+<!--
+  aesthetic_dna: Enterprise Premium, High-Trust AI Dashboard, Stripe/Ramp/Mercury fusion
+  ui_paradigm: Desktop Split-Pane Document Review Workspace
+  run_id: e984a82c-fbb6-4474-8bf1-d80b8bed866f
+-->
+<!DOCTYPE html>
+<html lang="ja" class="antialiased text-slate-800">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Review — AI Back-Office Automation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        tailwind.config = {
+            theme: { extend: {
+                fontFamily: { sans: ['Inter', 'Noto Sans JP', 'sans-serif'], mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'] },
+                colors: { brand: { 50: '#eef0ff', 100: '#e0e4ff', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 900: '#312e81' }, canvas: '#F8F9FA' },
+                boxShadow: { 'card': '0 1px 3px rgba(0,0,0,0.02), 0 4px 12px rgba(0,0,0,0.03)', 'card-hover': '0 2px 6px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06)', 'glow': '0 0 20px rgba(99, 102, 241, 0.2)' }
+            }}
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 6px; height: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; } ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .bg-dots { background-image: radial-gradient(#cbd5e1 1px, transparent 1px); background-size: 20px 20px; }
+        @keyframes pulse-ring { 0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); } 100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); } }
+        .status-dot { animation: pulse-ring 2s infinite; }
+        .ai-box { position: absolute; border: 2px solid rgba(99, 102, 241, 0.6); background: rgba(99, 102, 241, 0.05); border-radius: 4px; transition: all 0.2s ease; cursor: pointer; }
+        .ai-box:hover { border-color: rgba(99, 102, 241, 1); background: rgba(99, 102, 241, 0.15); box-shadow: 0 0 8px rgba(99, 102, 241, 0.3); z-index: 10; }
+        .ai-box::after { content: attr(data-label); position: absolute; top: -24px; left: -2px; background: #4f46e5; color: white; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; opacity: 0; transition: opacity 0.2s ease; white-space: nowrap; pointer-events: none; }
+        .ai-box:hover::after { opacity: 1; }
+        .connector-line { stroke-dasharray: 4; animation: dash 20s linear infinite; }
+        @keyframes dash { to { stroke-dashoffset: -100; } }
+        @keyframes shimmer { 100% { transform: translateX(100%); } }
+    </style>
+</head>
+<body class="bg-canvas w-full h-screen flex overflow-hidden selection:bg-brand-500 selection:text-white">
+    <aside class="w-[260px] bg-white border-r border-slate-200/60 flex flex-col shrink-0 z-20 shadow-[4px_0_24px_rgba(0,0,0,0.01)] hidden md:flex">
+        <div class="h-16 flex items-center px-6 border-b border-slate-100"><div class="flex items-center gap-2.5"><div class="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-sm"><i class="ph-bold ph-planet text-white text-sm"></i></div><span class="font-bold text-slate-800 tracking-tight text-sm">OmniFlow <span class="font-medium text-slate-400">BackOffice</span></span></div></div>
+        <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-1 text-sm font-medium">
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors"><i class="ph ph-squares-four text-lg text-slate-400"></i>Dashboard</a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-gradient-to-r from-brand-50 to-transparent text-brand-700 border-l-2 border-brand-500 transition-colors"><i class="ph-fill ph-check-square-offset text-lg text-brand-600"></i>Tasks Review<span class="ml-auto bg-brand-100 text-brand-700 py-0.5 px-2 rounded-full text-[10px] font-bold">12</span></a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors"><i class="ph ph-git-merge text-lg text-slate-400"></i>Workflows</a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors"><i class="ph ph-books text-lg text-slate-400"></i>Knowledge Base</a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors"><i class="ph ph-users text-lg text-slate-400"></i>Team Activity</a>
+        </nav>
+        <div class="p-4 border-t border-slate-100"><div class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors"><img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" class="w-9 h-9 rounded-full border border-slate-200"><div class="flex flex-col"><span class="text-xs font-semibold text-slate-800">Shinji Fujiwara</span><span class="text-[10px] text-slate-500">Finance Dept</span></div><i class="ph ph-caret-up text-slate-400 ml-auto"></i></div></div>
+    </aside>
+    <main class="flex-1 flex flex-col min-w-0 h-screen relative">
+        <header class="h-14 flex items-center justify-between px-6 border-b border-slate-200/60 bg-white/90 backdrop-blur shrink-0 z-10 w-full relative">
+            <div class="flex items-center text-xs font-medium text-slate-500 gap-2"><a href="#" class="hover:text-slate-800 transition-colors">Home</a><i class="ph ph-caret-right text-slate-400"></i><a href="#" class="hover:text-slate-800 transition-colors">Tasks</a><i class="ph ph-caret-right text-slate-400"></i><span class="text-slate-800 px-2 py-1 bg-slate-100 rounded-md">#4093 Payment Approval</span></div>
+            <div class="flex items-center gap-4"><div class="flex items-center gap-1.5 text-xs font-medium text-slate-400"><i class="ph ph-clock text-sm"></i>Elapsed: <span class="text-slate-700 font-mono tracking-tighter">02:45</span></div><div class="w-px h-4 bg-slate-200"></div><div class="flex items-center gap-2 px-2.5 py-1 rounded-full bg-amber-50 border border-amber-200/60 text-amber-700 text-xs font-bold shadow-sm"><div class="w-1.5 h-1.5 rounded-full bg-amber-500 status-dot"></div>Awaiting Review 承認待ち</div><button class="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"><i class="ph-bold ph-share-network"></i></button></div>
+        </header>
+        <div class="px-8 py-5 bg-white border-b border-slate-200/60 shrink-0 z-10 flex justify-between items-end">
+            <div><h1 class="text-2xl font-bold text-slate-900 tracking-tight flex items-center gap-3">支払承認ルート — Toyota Tsusho / Logistics<span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-500 text-[10px] font-mono tracking-wider align-middle border border-slate-200">PAY-994</span></h1><div class="flex items-center gap-4 mt-2 text-xs text-slate-500"><span class="flex items-center gap-1"><i class="ph ph-calendar-blank"></i> Created 2023-10-27 14:32 JST</span><span class="w-1 h-1 rounded-full bg-slate-300"></span><span class="flex items-center gap-1"><i class="ph ph-git-branch"></i> Proc: PR-8821</span><span class="w-1 h-1 rounded-full bg-slate-300"></span><span class="flex items-center gap-1"><i class="ph ph-user-circle"></i> Assigned to you</span></div></div>
+            <div class="text-right"><p class="text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">AI Confidence</p><div class="flex items-center justify-end gap-2 text-emerald-600"><i class="ph-fill ph-check-circle text-xl"></i><span class="text-2xl font-bold font-mono tracking-tighter">98.4%</span></div></div>
+        </div>
+        <div class="flex-1 flex overflow-hidden w-full relative">
+            <div class="w-[60%] bg-[#F1F3F5] flex flex-col relative border-r border-slate-200/60 z-0">
+                <div class="h-12 bg-white/50 backdrop-blur border-b border-slate-200 flex items-center justify-between px-4 shrink-0 absolute top-0 left-0 right-0 z-10">
+                    <div class="flex items-center gap-1"><button class="px-3 py-1.5 text-xs font-medium rounded-md text-slate-500 hover:bg-white hover:shadow-sm transition-all">Original</button><button class="px-3 py-1.5 text-xs font-medium rounded-md bg-white text-brand-600 shadow-sm border border-slate-200/50 flex items-center gap-1.5"><i class="ph-fill ph-bounding-box text-brand-500"></i> AI Extraction</button><button class="px-3 py-1.5 text-xs font-medium rounded-md text-slate-500 hover:bg-white hover:shadow-sm transition-all">Routing Logic</button></div>
+                    <div class="flex items-center bg-white rounded-md border border-slate-200 shadow-sm p-0.5"><button class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-50 rounded"><i class="ph ph-minus"></i></button><span class="text-[10px] font-mono text-slate-600 px-2 select-none">120%</span><button class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-50 rounded"><i class="ph ph-plus"></i></button><div class="w-px h-4 bg-slate-200 mx-1"></div><button class="w-7 h-7 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-50 rounded"><i class="ph ph-arrows-out"></i></button></div>
+                </div>
+                <div class="flex-1 overflow-auto bg-dots flex items-center justify-center pt-20 pb-12 px-12 relative">
+                    <svg class="absolute inset-0 w-full h-full pointer-events-none z-10 opacity-30" preserveAspectRatio="none"><path d="M 350 200 C 450 200, 500 150, 700 150" fill="none" stroke="#6366f1" stroke-width="1.5" class="connector-line"/><path d="M 450 400 C 550 400, 600 350, 700 350" fill="none" stroke="#6366f1" stroke-width="1.5" class="connector-line"/></svg>
+                    <div class="bg-white rounded-sm shadow-[0_4px_24px_rgba(0,0,0,0.06),0_1px_3px_rgba(0,0,0,0.04)] aspect-[1/1.414] w-full max-w-2xl relative select-none">
+                        <div class="absolute top-12 left-12 right-12 border-b-2 border-slate-800 pb-4 flex justify-between items-end"><div><h2 class="text-3xl font-bold text-slate-800 tracking-wider">INVOICE <span class="text-lg text-slate-500 font-normal">御請求書</span></h2></div><div class="text-right text-sm font-mono text-slate-600"><p>Date: 2023/10/25</p><p>No: INV-2023-9948</p></div></div>
+                        <div class="absolute top-36 left-12 text-sm text-slate-700"><p class="font-bold text-lg mb-1">Toyota Tsusho Corporation</p><p class="text-slate-500">Logistics Division</p><p class="text-slate-500">1-4-32, Meieki, Nakamura-ku, Nagoya</p></div>
+                        <div class="ai-box" style="top: 140px; left: 44px; width: 280px; height: 32px;" data-label="Extracted: Vendor Entity"></div>
+                        <div class="absolute top-36 right-12 text-sm text-slate-700 border-l border-slate-200 pl-4"><p class="text-slate-400 text-xs mb-1">Bill To:</p><p class="font-bold">Acme Japan K.K.</p><p>Accounts Payable</p></div>
+                        <div class="absolute top-64 left-12 right-12">
+                            <div class="flex border-b border-slate-300 pb-2 text-xs font-bold text-slate-500 uppercase tracking-wider"><div class="flex-1">Description 品目</div><div class="w-24 text-right">Qty 数量</div><div class="w-32 text-right">Unit Price 単価</div><div class="w-32 text-right">Amount 金額</div></div>
+                            <div class="flex border-b border-slate-100 py-4 text-sm text-slate-800"><div class="flex-1">Overseas Freight Forwarding (Oct)</div><div class="w-24 text-right">1</div><div class="w-32 text-right font-mono">¥2,800,000</div><div class="w-32 text-right font-mono">¥2,800,000</div></div>
+                            <div class="flex border-b border-slate-100 py-4 text-sm text-slate-800"><div class="flex-1">Customs Clearance Fees</div><div class="w-24 text-right">1</div><div class="w-32 text-right font-mono">¥145,455</div><div class="w-32 text-right font-mono">¥145,455</div></div>
+                        </div>
+                        <div class="absolute bottom-32 right-12 w-64"><div class="flex justify-between py-2 text-sm text-slate-600"><span>Subtotal:</span><span class="font-mono">¥2,945,455</span></div><div class="flex justify-between py-2 text-sm text-slate-600 border-b border-slate-300"><span>Tax (10%):</span><span class="font-mono">¥294,545</span></div><div class="flex justify-between py-3 text-lg font-bold text-slate-900"><span>TOTAL:</span><span class="font-mono">¥3,240,000</span></div></div>
+                        <div class="ai-box" style="bottom: 122px; right: 40px; width: 260px; height: 48px;" data-label="Extracted: Total Amount (JPY)"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="w-[40%] bg-canvas flex flex-col relative z-20 shadow-[-4px_0_24px_rgba(0,0,0,0.02)]">
+                <div class="flex-1 overflow-y-auto p-6 space-y-6">
+                    <div class="bg-white rounded-[14px] shadow-card border border-slate-200/60 p-5 relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-indigo-50/50 to-transparent rounded-bl-full pointer-events-none"></div>
+                        <div class="flex items-center justify-between mb-4"><h3 class="text-[13px] font-bold text-slate-800 flex items-center gap-2"><i class="ph-fill ph-scan text-indigo-500 text-lg"></i>AI Extraction Results</h3></div>
+                        <div class="space-y-3 relative z-10">
+                            <div class="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-100 hover:border-indigo-200 transition-colors cursor-pointer group/row"><div class="flex flex-col"><span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Vendor Entity 支払先</span><span class="text-sm font-medium text-slate-800 mt-0.5">Toyota Tsusho Corp.</span></div><div class="flex items-center gap-1.5 opacity-0 group-hover/row:opacity-100 transition-opacity"><span class="text-[10px] text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">View Source</span></div></div>
+                            <div class="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-100 hover:border-indigo-200 transition-colors cursor-pointer group/row ring-1 ring-indigo-500/20"><div class="flex flex-col"><span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Total Amount 請求金額</span><span class="text-sm font-bold text-slate-900 font-mono mt-0.5 tracking-tight text-indigo-700">¥3,240,000</span></div><div class="flex items-center gap-1.5 text-emerald-600"><span class="text-[10px] font-medium bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">Match 100%</span><i class="ph-fill ph-check-circle"></i></div></div>
+                            <div class="flex justify-between p-2.5 rounded-lg bg-slate-50 border border-slate-100 cursor-default"><div class="flex flex-col"><span class="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Due Date 支払期日</span><span class="text-sm font-medium text-slate-800 mt-0.5 font-mono">2023/11/30</span></div><span class="text-[10px] text-slate-400 self-center">EOM Net 30 default</span></div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-[14px] shadow-card border border-slate-200/60 p-5">
+                        <div class="flex items-center justify-between mb-4"><h3 class="text-[13px] font-bold text-slate-800 flex items-center gap-2"><i class="ph-fill ph-shield-check text-slate-700 text-lg"></i>Policy Validation Checks</h3><span class="text-[11px] font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md">5 Rules Executed</span></div>
+                        <div class="space-y-1 text-sm font-medium">
+                            <div class="flex items-center justify-between py-2 border-b border-slate-50"><div class="flex items-center gap-3 text-slate-700"><i class="ph-fill ph-check-circle text-emerald-500 text-lg"></i>税込金額一致 (Tax Calculation Match)</div><span class="text-xs text-slate-400 font-mono">10% applied</span></div>
+                            <div class="flex items-center justify-between py-2 border-b border-slate-50"><div class="flex items-center gap-3 text-slate-700"><i class="ph-fill ph-check-circle text-emerald-500 text-lg"></i>発注書照合 (PO Matching)</div><a href="#" class="text-[10px] text-brand-600 hover:underline font-mono">PR-8821 ↗</a></div>
+                            <div class="flex items-center justify-between py-2 border-b border-slate-50"><div class="flex items-center gap-3 text-slate-700"><i class="ph-fill ph-check-circle text-emerald-500 text-lg"></i>重複支払チェック (Duplicate Prevention)</div><span class="text-[10px] text-slate-400 bg-slate-100 px-1.5 rounded">0 found</span></div>
+                            <div class="flex flex-col py-2 border-b border-slate-50"><div class="flex items-center justify-between"><div class="flex items-center gap-3 text-slate-900 font-semibold"><i class="ph-fill ph-warning text-amber-500 text-lg"></i>予算範囲内 (Budget Allocation)</div><span class="text-[10px] font-bold text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded border border-amber-200">Alert</span></div><div class="ml-8 mt-1.5 flex flex-col gap-1.5"><div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden"><div class="h-full bg-amber-400 rounded-full" style="width: 88%"></div></div><p class="text-[10px] text-slate-500">Logistics Q4 budget is <strong class="text-amber-600">88% utilized</strong> (Remaining: ¥1,200,000).</p></div></div>
+                            <div class="flex items-center justify-between py-2"><div class="flex items-center gap-3 text-slate-700"><i class="ph-fill ph-check-circle text-emerald-500 text-lg"></i>承認権限者確認 (Authority Matrix Check)</div><span class="text-[10px] text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">Valid Route</span></div>
+                        </div>
+                    </div>
+                    <div class="bg-transparent pb-4">
+                        <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3 pl-1">Knowledge Applied</h3>
+                        <div class="flex flex-wrap gap-2"><div class="flex items-center gap-1.5 bg-white border border-slate-200 shadow-sm px-2.5 py-1.5 rounded-lg text-xs text-slate-600 hover:border-brand-300 cursor-pointer transition-colors"><i class="ph ph-file-text text-brand-500"></i>Vendor Template: <span class="font-mono">Toyota_v3</span></div><div class="flex items-center gap-1.5 bg-white border border-slate-200 shadow-sm px-2.5 py-1.5 rounded-lg text-xs text-slate-600 hover:border-brand-300 cursor-pointer transition-colors"><i class="ph-bold ph-scales text-brand-500"></i>Rule: JPY > ¥3M Route</div></div>
+                    </div>
+                    <div class="h-4"></div>
+                </div>
+                <div class="shrink-0 p-5 bg-white border-t border-slate-200/60 shadow-[0_-8px_24px_rgba(0,0,0,0.02)] z-30">
+                    <div class="flex gap-3">
+                        <button class="flex-1 px-4 py-3 bg-white border border-slate-300 rounded-xl text-sm font-bold text-slate-700 shadow-sm hover:bg-slate-50 hover:text-slate-900 transition-all focus:outline-none focus:ring-2 focus:ring-slate-200 flex items-center justify-center gap-2"><i class="ph-bold ph-arrow-u-up-left"></i>Send Back 差し戻し</button>
+                        <button class="flex-[1.5] px-4 py-3 bg-gradient-to-r from-brand-600 to-violet-600 rounded-xl text-sm font-bold text-white shadow-md shadow-brand-500/25 hover:shadow-lg hover:shadow-brand-500/40 hover:-translate-y-0.5 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-500 flex items-center justify-center gap-2 group relative overflow-hidden"><div class="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:animate-[shimmer_1.5s_infinite]"></div><i class="ph-bold ph-check text-lg"></i>Approve 承認</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

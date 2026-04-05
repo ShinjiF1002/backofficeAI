@@ -1,0 +1,158 @@
+<!--
+  aesthetic_dna: Dense, keyboard-first "Command Center" inspired by Linear/Vercel.
+  ui_paradigm: Multi-pane split dashboard with strict constraints, tabular data bias, and side-timeline.
+  palette_choice: Deep monochrome (Absolute Black/Dark Grays) with a single electric violet accent (#7C3AED).
+  run_id: ac9fc13e-bbdd-49b7-9c6a-dca5870b9f4a
+-->
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Operations Command Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        bg: '#000000',
+                        panel: '#0A0A0A',
+                        surface: '#111111',
+                        surfaceHover: '#1A1A1A',
+                        border: '#242424',
+                        borderHighlight: '#333333',
+                        textMain: '#EDEDED',
+                        textMuted: '#888888',
+                        textDark: '#555555',
+                        accent: '#7C3AED',
+                        accentHover: '#8B5CF6',
+                        accentMuted: 'rgba(124, 58, 237, 0.15)',
+                        statusPending: '#EAB308',
+                        statusRunning: '#3B82F6',
+                        statusSuccess: '#22C55E',
+                    },
+                    spacing: { 'sidebar': '240px' },
+                    borderRadius: { 'cmd': '6px' }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-feature-settings: "cv11", "ss01"; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; letter-spacing: -0.01em; }
+        .tnum { font-feature-settings: "tnum"; font-variant-numeric: tabular-nums; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #242424; border-radius: 4px; border: 2px solid #000; }
+        ::-webkit-scrollbar-thumb:hover { background: #333333; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.4); } 70% { box-shadow: 0 0 0 4px rgba(124, 58, 237, 0); } 100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0); } }
+        .live-dot { animation: pulse-ring 2s infinite cubic-bezier(0.4, 0, 0.2, 1); }
+        .timeline-line::before { content: ''; position: absolute; left: 11px; top: 24px; bottom: -8px; width: 1px; background-color: #242424; z-index: 0; }
+        .timeline-item:last-child .timeline-line::before { display: none; }
+        ::selection { background-color: #7C3AED; color: white; }
+        @keyframes translate { 0% { transform: translateX(-100%); } 100% { transform: translateX(200%); } }
+    </style>
+</head>
+<body class="h-screen w-screen overflow-hidden flex text-[13px] bg-bg text-textMain">
+    <aside class="w-sidebar h-full border-r border-border bg-bg flex flex-col flex-shrink-0 z-20">
+        <div class="h-14 border-b border-border flex items-center px-4 hover:bg-surface transition-colors cursor-pointer group">
+            <div class="w-6 h-6 rounded flex items-center justify-center bg-white text-black font-semibold text-xs mr-3">A</div>
+            <div class="flex-1 min-w-0"><div class="font-medium truncate">Automata HQ</div><div class="text-[11px] text-textMuted tnum font-mono">ID: JP-Tokyo-01</div></div>
+            <i class="ph ph-caret-up-down text-textMuted group-hover:text-textMain"></i>
+        </div>
+        <div class="flex-1 overflow-y-auto py-4 px-3 flex flex-col gap-6 hide-scrollbar">
+            <nav class="flex flex-col gap-0.5">
+                <div class="text-[10px] font-semibold text-textDark uppercase tracking-[0.1em] px-2 mb-2">Workspace ワークスペース</div>
+                <a href="#" class="flex items-center px-2 py-1.5 rounded-cmd bg-surface text-textMain relative group">
+                    <div class="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-4 bg-accent rounded-r-sm"></div>
+                    <i class="ph ph-house text-textMuted group-hover:text-textMain mr-2.5 text-lg"></i><span>Command Center</span>
+                </a>
+                <a href="#" class="flex items-center px-2 py-1.5 rounded-cmd text-textMuted hover:bg-surface hover:text-textMain transition-colors group"><i class="ph ph-flow-arrow mr-2.5 text-lg"></i><span>Flows</span></a>
+                <a href="#" class="flex items-center px-2 py-1.5 rounded-cmd text-textMuted hover:bg-surface hover:text-textMain transition-colors group"><i class="ph ph-check-square-offset mr-2.5 text-lg"></i><span>Approvals</span><span class="ml-auto bg-border text-textMain text-[10px] px-1.5 py-0.5 rounded tnum">12</span></a>
+                <a href="#" class="flex items-center px-2 py-1.5 rounded-cmd text-textMuted hover:bg-surface hover:text-textMain transition-colors group"><i class="ph ph-database mr-2.5 text-lg"></i><span>Data Models</span></a>
+            </nav>
+            <nav class="flex flex-col gap-0.5">
+                <div class="text-[10px] font-semibold text-textDark uppercase tracking-[0.1em] px-2 mb-2">Administration 管理</div>
+                <a href="#" class="flex items-center px-2 py-1.5 rounded-cmd text-textMuted hover:bg-surface hover:text-textMain transition-colors group"><i class="ph ph-users mr-2.5 text-lg"></i><span>Team</span></a>
+                <a href="#" class="flex items-center px-2 py-1.5 rounded-cmd text-textMuted hover:bg-surface hover:text-textMain transition-colors group"><i class="ph ph-plugs-connected mr-2.5 text-lg"></i><span>Integrations</span></a>
+                <a href="#" class="flex items-center px-2 py-1.5 rounded-cmd text-textMuted hover:bg-surface hover:text-textMain transition-colors group"><i class="ph ph-scroll mr-2.5 text-lg"></i><span>Audit Logs</span></a>
+            </nav>
+        </div>
+        <div class="border-t border-border p-3">
+            <div class="flex items-center gap-3 p-2 rounded-cmd hover:bg-surface cursor-pointer transition-colors">
+                <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=64&h=64&q=80" alt="" class="w-7 h-7 rounded grayscale object-cover border border-borderHighlight">
+                <div class="flex flex-col leading-tight min-w-0"><span class="font-medium truncate text-textMain">S. Fujiwara</span><span class="text-[11px] text-textMuted truncate">Operations / 操作者</span></div>
+            </div>
+        </div>
+    </aside>
+    <main class="flex-1 flex flex-col min-w-0 bg-panel relative z-10">
+        <header class="h-14 border-b border-border flex items-center px-6 justify-between flex-shrink-0 bg-bg/50 backdrop-blur-md sticky top-0 z-20">
+            <div class="flex items-center text-textMuted font-medium text-sm gap-2"><i class="ph ph-command ml-[-4px]"></i><span>Automata</span><span class="text-borderHighlight">/</span><span class="text-textMain">Home</span></div>
+            <button class="flex items-center gap-2 px-3 py-1.5 border border-border rounded-cmd bg-bg text-textMuted hover:border-borderHighlight hover:text-textMain transition-all w-64 justify-between">
+                <div class="flex items-center gap-2"><i class="ph ph-magnifying-glass"></i><span class="text-[12px]">Search tasks, logs...</span></div>
+                <div class="flex items-center gap-1"><kbd class="font-mono text-[10px] bg-surface px-1.5 py-0.5 rounded border border-border">⌘</kbd><kbd class="font-mono text-[10px] bg-surface px-1.5 py-0.5 rounded border border-border">K</kbd></div>
+            </button>
+        </header>
+        <div class="flex-1 overflow-y-auto">
+            <div class="max-w-[1400px] mx-auto p-6 lg:p-8 flex flex-col xl:flex-row gap-8">
+                <div class="flex-1 flex flex-col gap-8 min-w-0">
+                    <div class="flex items-end justify-between">
+                        <div><h1 class="text-2xl font-medium tracking-tight text-white mb-1">Overview</h1><p class="text-sm text-textMuted font-mono">Tuesday, Oct 24 • <span class="tnum text-textMain">14:38 JST</span></p></div>
+                        <div class="flex gap-2"><button class="px-3 py-1.5 border border-border bg-bg rounded-cmd text-textMain hover:bg-surface transition-colors flex items-center gap-2"><i class="ph ph-faders"></i> Filter</button><button class="px-3 py-1.5 border border-transparent bg-white text-black rounded-cmd hover:bg-gray-200 transition-colors font-medium flex items-center gap-2"><i class="ph ph-plus"></i> New Task</button></div>
+                    </div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="flex flex-col p-4 border border-border rounded-cmd bg-bg shadow-sm relative overflow-hidden group"><div class="flex justify-between items-start mb-4"><span class="text-[11px] font-semibold text-textMuted uppercase tracking-widest">Pending</span><i class="ph ph-hourglass text-statusPending text-lg"></i></div><div class="flex items-baseline gap-2"><span class="text-3xl font-mono text-white tnum tracking-tight group-hover:text-statusPending transition-colors">12</span><span class="text-xs text-textDark">承認待ち</span></div></div>
+                        <div class="flex flex-col p-4 border border-border rounded-cmd bg-bg shadow-sm relative overflow-hidden group"><div class="flex justify-between items-start mb-4"><span class="text-[11px] font-semibold text-textMuted uppercase tracking-widest">Running</span><i class="ph ph-spinner-gap animate-spin text-statusRunning text-lg"></i></div><div class="flex items-baseline gap-2"><span class="text-3xl font-mono text-white tnum tracking-tight group-hover:text-statusRunning transition-colors">3</span><span class="text-xs text-textDark">実行中</span></div><div class="absolute bottom-0 left-0 h-[2px] bg-statusRunning/20 w-full"><div class="h-full bg-statusRunning w-[45%]"></div></div></div>
+                        <div class="flex flex-col p-4 border border-border rounded-cmd bg-bg shadow-sm group"><div class="flex justify-between items-start mb-4"><span class="text-[11px] font-semibold text-textMuted uppercase tracking-widest">Completed</span><i class="ph ph-check-circle text-textDark text-lg"></i></div><div class="flex items-baseline gap-2"><span class="text-3xl font-mono text-white tnum tracking-tight">47</span><span class="text-xs text-textDark">本日完了</span></div></div>
+                        <div class="flex flex-col p-4 border border-accent/30 rounded-cmd bg-accent/5 shadow-sm group relative"><div class="absolute top-0 right-0 w-16 h-16 bg-accent opacity-10 blur-xl rounded-full"></div><div class="flex justify-between items-start mb-4 relative z-10"><span class="text-[11px] font-semibold text-accent uppercase tracking-widest">Accuracy</span><i class="ph ph-target text-accent text-lg"></i></div><div class="flex items-baseline gap-2 relative z-10"><span class="text-3xl font-mono text-white tnum tracking-tight">96.2<span class="text-lg text-textMuted">%</span></span><span class="text-xs text-textDark">精度</span></div></div>
+                    </div>
+                    <div class="flex flex-col border border-border rounded-cmd bg-bg overflow-hidden flex-shrink-0">
+                        <div class="h-10 border-b border-border bg-surface flex items-center px-4 justify-between"><div class="flex items-center gap-2"><div class="w-1.5 h-1.5 rounded-full bg-statusPending"></div><h2 class="text-[11px] font-semibold text-textMain uppercase tracking-widest">Pending Queue <span class="text-textDark ml-1 tracking-normal font-normal">承認待ちタスク</span></h2></div><a href="#" class="text-xs text-textMuted hover:text-white transition-colors">View All</a></div>
+                        <div class="flex flex-col">
+                            <div class="flex items-center px-4 py-2 border-b border-border bg-bg text-[11px] text-textMuted uppercase tracking-wider font-medium"><div class="w-16">ID</div><div class="flex-1 min-w-0">Procedure / 送信元</div><div class="w-32 hidden md:block">Elapsed</div><div class="w-24">Confidence</div><div class="w-24 text-right">Action</div></div>
+                            <div class="flex items-center px-4 py-2.5 border-b border-border hover:bg-surfaceHover transition-colors group"><div class="w-16 font-mono text-textMuted text-xs">#4092</div><div class="flex-1 min-w-0 pr-4"><div class="flex items-center gap-2"><span class="font-medium text-white truncate">Invoice Processing</span><span class="text-xs text-textDark border border-border rounded px-1 hidden sm:inline-block">請求書処理</span></div><div class="text-[11px] text-textMuted mt-0.5 truncate">株式会社ヤマダ電機_4月分.pdf</div></div><div class="w-32 font-mono text-xs text-textMuted hidden md:block">14m 22s</div><div class="w-24 flex flex-col justify-center"><div class="flex justify-between text-[11px] font-mono mb-1"><span>94%</span></div><div class="h-1 w-full bg-border rounded-full overflow-hidden"><div class="h-full bg-statusSuccess w-[94%]"></div></div></div><div class="w-24 flex justify-end"><button class="px-3 py-1.5 border border-border rounded hover:border-accent hover:text-accent text-xs font-medium transition-all bg-bg group-hover:bg-surface">Review</button></div></div>
+                            <div class="flex items-center px-4 py-2.5 border-b border-border hover:bg-surfaceHover transition-colors group"><div class="w-16 font-mono text-textMuted text-xs">#4093</div><div class="flex-1 min-w-0 pr-4"><div class="flex items-center gap-2"><span class="font-medium text-white truncate">Payment Approval</span><span class="text-xs text-textDark border border-border rounded px-1 hidden sm:inline-block">支払承認</span></div><div class="text-[11px] text-textMuted mt-0.5 truncate">AWS_March_Billing_Consolidated.csv</div></div><div class="w-32 font-mono text-xs text-statusPending hidden md:block">1h 05m</div><div class="w-24 flex flex-col justify-center"><div class="flex justify-between text-[11px] font-mono mb-1"><span class="text-statusPending">81%</span></div><div class="h-1 w-full bg-border rounded-full overflow-hidden"><div class="h-full bg-statusPending w-[81%]"></div></div></div><div class="w-24 flex justify-end"><button class="px-3 py-1.5 border border-border rounded hover:border-accent hover:text-accent text-xs font-medium transition-all bg-bg group-hover:bg-surface">Review</button></div></div>
+                            <div class="flex items-center px-4 py-2.5 border-b border-border hover:bg-surfaceHover transition-colors group"><div class="w-16 font-mono text-textMuted text-xs">#4095</div><div class="flex-1 min-w-0 pr-4"><div class="flex items-center gap-2"><span class="font-medium text-white truncate">Expense Report</span><span class="text-xs text-textDark border border-border rounded px-1 hidden sm:inline-block">経費精算</span></div><div class="text-[11px] text-textMuted mt-0.5 truncate">営業部交通費_佐藤健太.xlsx</div></div><div class="w-32 font-mono text-xs text-textMuted hidden md:block">4m 10s</div><div class="w-24 flex flex-col justify-center"><div class="flex justify-between text-[11px] font-mono mb-1"><span>98%</span></div><div class="h-1 w-full bg-border rounded-full overflow-hidden"><div class="h-full bg-statusSuccess w-[98%]"></div></div></div><div class="w-24 flex justify-end"><button class="px-3 py-1.5 border border-border bg-bg rounded hover:border-statusSuccess hover:text-statusSuccess text-xs font-medium transition-all group-hover:bg-surface flex items-center gap-1"><i class="ph ph-check font-bold"></i> Approve</button></div></div>
+                            <div class="flex items-center px-4 py-2.5 hover:bg-surfaceHover transition-colors group border-b border-border"><div class="w-16 font-mono text-textMuted text-xs">#4097</div><div class="flex-1 min-w-0 pr-4"><div class="flex items-center gap-2"><span class="font-medium text-white truncate">Contract Review</span><span class="text-xs text-textDark border border-border rounded px-1 hidden sm:inline-block">契約書審査</span></div><div class="text-[11px] text-textMuted mt-0.5 truncate">NDA_GlobalTech_v2_signed.pdf</div></div><div class="w-32 font-mono text-xs text-textMuted hidden md:block">2m 45s</div><div class="w-24 flex flex-col justify-center"><div class="flex justify-between text-[11px] font-mono mb-1 text-red-500"><span>62%</span></div><div class="h-1 w-full bg-border rounded-full overflow-hidden"><div class="h-full bg-red-500 w-[62%]"></div></div></div><div class="w-24 flex justify-end"><button class="px-3 py-1.5 border border-border rounded hover:border-red-500 hover:text-red-500 text-xs font-medium transition-all bg-bg group-hover:bg-surface">Review</button></div></div>
+                            <div class="flex items-center px-4 py-2.5 hover:bg-surfaceHover transition-colors group"><div class="w-16 font-mono text-textMuted text-xs">#4098</div><div class="flex-1 min-w-0 pr-4"><div class="flex items-center gap-2"><span class="font-medium text-white truncate">PO Matching</span><span class="text-xs text-textDark border border-border rounded px-1 hidden sm:inline-block">発注書照合</span></div><div class="text-[11px] text-textMuted mt-0.5 truncate">PO-40992_OtsukaCorp.pdf</div></div><div class="w-32 font-mono text-xs text-textMuted hidden md:block">1m 12s</div><div class="w-24 flex flex-col justify-center"><div class="flex justify-between text-[11px] font-mono mb-1"><span>91%</span></div><div class="h-1 w-full bg-border rounded-full overflow-hidden"><div class="h-full bg-statusSuccess w-[91%]"></div></div></div><div class="w-24 flex justify-end"><button class="px-3 py-1.5 border border-border rounded hover:border-accent hover:text-accent text-xs font-medium transition-all bg-bg group-hover:bg-surface">Review</button></div></div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col mb-8">
+                        <div class="flex items-center gap-2 mb-4"><i class="ph ph-lightning text-textMuted"></i><h2 class="text-[11px] font-semibold text-textMuted uppercase tracking-widest">Active Executions <span class="text-textDark ml-1 tracking-normal font-normal">実行中プロセス</span></h2></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="border border-border bg-bg p-4 rounded-cmd flex flex-col gap-3 relative overflow-hidden group"><div class="flex justify-between items-start"><div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-accent live-dot"></div><span class="font-mono text-xs text-textMuted">ID-8821</span></div><span class="font-mono text-xs text-textMuted">00:45</span></div><div><div class="font-medium text-white mb-1">Onboarding Setup_Takahashi</div><div class="text-xs text-textDark">Active Directory & SaaS Provisioning</div></div><div class="mt-auto pt-2"><div class="flex justify-between text-[10px] uppercase font-semibold text-textMuted tracking-wider mb-1.5"><span>Extrac. Auth Tokens</span><span class="text-accent">Step 3/7</span></div><div class="h-1 w-full bg-surface rounded-full overflow-hidden"><div class="h-full bg-accent w-[42%] relative overflow-hidden"><div class="absolute inset-0 bg-white/20 w-1/2 skew-x-[-20deg] animate-[translate_2s_infinite]"></div></div></div></div></div>
+                            <div class="border border-border bg-bg p-4 rounded-cmd flex flex-col gap-3 relative overflow-hidden group"><div class="flex justify-between items-start"><div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-accent live-dot"></div><span class="font-mono text-xs text-textMuted">ID-8822</span></div><span class="font-mono text-xs text-textMuted">02:12</span></div><div><div class="font-medium text-white mb-1">Quarterly Financial Sync</div><div class="text-xs text-textDark">SAP to Salesforce Data Sync</div></div><div class="mt-auto pt-2"><div class="flex justify-between text-[10px] uppercase font-semibold text-textMuted tracking-wider mb-1.5"><span>Validating Schemas</span><span class="text-accent">Step 6/12</span></div><div class="h-1 w-full bg-surface rounded-full overflow-hidden"><div class="h-full bg-accent w-[50%] relative overflow-hidden"><div class="absolute inset-0 bg-white/20 w-1/2 skew-x-[-20deg] animate-[translate_2s_infinite]"></div></div></div></div></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="w-full xl:w-80 flex-shrink-0 flex flex-col">
+                    <div class="sticky top-6 flex flex-col border border-border bg-bg rounded-cmd overflow-hidden h-fit">
+                        <div class="h-12 border-b border-border bg-surface flex items-center px-4 justify-between"><div class="flex items-center gap-2"><i class="ph ph-git-commit text-textMuted"></i><h2 class="text-[11px] font-semibold text-textMain uppercase tracking-widest">Recent Corrections <span class="text-textDark ml-1 tracking-normal font-normal">修正履歴</span></h2></div></div>
+                        <div class="p-4 flex flex-col">
+                            <div class="relative">
+                                <div class="relative pl-8 pb-6 timeline-item timeline-line group"><div class="absolute left-2.5 top-1 -translate-x-1/2 w-2 h-2 rounded-full bg-border border border-border group-hover:bg-textMain transition-colors z-10 box-content"></div><div class="flex justify-between items-baseline mb-1"><span class="text-xs font-medium text-white">Invoice Mismatch</span><span class="text-[10px] font-mono text-textMuted">14:22</span></div><p class="text-xs text-textDark leading-relaxed">System mapped 'Total' to 'Subtotal'. Operator corrected field mapping for <span class="text-textMuted font-mono bg-surface px-1 py-0.5 rounded border border-border">Vendor_Sony</span> template.</p></div>
+                                <div class="relative pl-8 pb-6 timeline-item timeline-line group"><div class="absolute left-2.5 top-1 -translate-x-1/2 w-2 h-2 rounded-full bg-border border border-border group-hover:bg-textMain transition-colors z-10 box-content"></div><div class="flex justify-between items-baseline mb-1"><span class="text-xs font-medium text-white">Missing Signature</span><span class="text-[10px] font-mono text-textMuted">13:05</span></div><p class="text-xs text-textDark leading-relaxed">NDA document flagged. OCR failed to detect handwritten stamp (Hanko). Proceeded via manual override.</p></div>
+                                <div class="relative pl-8 pb-6 timeline-item timeline-line group"><div class="absolute left-2.5 top-1 -translate-x-1/2 w-2 h-2 rounded-full bg-border border border-border group-hover:bg-textMain transition-colors z-10 box-content"></div><div class="flex justify-between items-baseline mb-1"><span class="text-xs font-medium text-white">Currency Conversion</span><span class="text-[10px] font-mono text-textMuted">11:40</span></div><p class="text-xs text-textDark leading-relaxed">API timeout for JPY to USD exchange rate via Stripe. Fallback to cached rate validated manually.</p></div>
+                                <div class="relative pl-8 timeline-item timeline-line group"><div class="absolute left-2.5 top-1 -translate-x-1/2 w-2 h-2 rounded-full bg-border border border-border group-hover:bg-textMain transition-colors z-10 box-content"></div><div class="flex justify-between items-baseline mb-1"><span class="text-xs font-medium text-white">New Format Detected</span><span class="text-[10px] font-mono text-textMuted">09:15</span></div><p class="text-xs text-textDark leading-relaxed">Unknown receipt structure. Prompted operator. Saved as new custom template <span class="text-textMuted font-mono">T-Receipt-v3</span>.</p></div>
+                            </div>
+                        </div>
+                        <div class="border-t border-border p-3 flex justify-center bg-surface w-full"><button class="text-xs text-textMuted hover:text-white transition-colors">View Audit Log 監査ログ</button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>
+</html>

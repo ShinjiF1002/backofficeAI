@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html lang="ja" class="antialiased">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Operations Dashboard - AutomataOS</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+                    },
+                    colors: {
+                        canvas: '#F8F9FA',
+                        surface: '#FFFFFF',
+                        primary: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                        },
+                        accent: {
+                            500: '#8b5cf6', // Violet
+                            600: '#7c3aed',
+                        }
+                    },
+                    boxShadow: {
+                        'premium-sm': '0 1px 2px rgba(0, 0, 0, 0.02), 0 2px 8px rgba(0, 0, 0, 0.04)',
+                        'premium-md': '0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 10px 24px -3px rgba(0, 0, 0, 0.04), 0 0 0 1px rgba(0,0,0,0.02)',
+                        'premium-lg': '0 10px 15px -3px rgba(0, 0, 0, 0.03), 0 25px 40px -12px rgba(0, 0, 0, 0.05), 0 0 0 1px rgba(0,0,0,0.02)',
+                        'inner-glow': 'inset 0 1px 0 0 rgba(255, 255, 255, 0.6)',
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                        'mesh': 'radial-gradient(at 40% 20%, hsla(250,100%,74%,0.1) 0px, transparent 50%), radial-gradient(at 80% 0%, hsla(189,100%,56%,0.1) 0px, transparent 50%), radial-gradient(at 0% 50%, hsla(333,100%,70%,0.1) 0px, transparent 50%)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Base Configuration */
+        body {
+            background-color: theme('colors.canvas');
+            color: theme('colors.slate.900');
+            /* Extremely subtle noise texture */
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.015'/%3E%3C/svg%3E");
+        }
+
+        /* Custom Scrollbar for Mac-like feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+        }
+
+        /* Animations */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.5); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(79, 70, 229, 0); }
+            100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
+        }
+        .animate-pulse-ring {
+            animation: pulse-ring 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes progress-shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .progress-bar-animated {
+            background: linear-gradient(90deg, theme('colors.primary.500') 0%, theme('colors.accent.400') 50%, theme('colors.primary.500') 100%);
+            background-size: 200% 100%;
+            animation: progress-shimmer 2.5s infinite linear;
+        }
+
+        /* Glass / Complex borders */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        .card-border {
+            border: 1px solid rgba(226, 232, 240, 0.6);
+        }
+        
+        .hover-lift {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: theme('boxShadow.premium-md');
+            border-color: rgba(99, 102, 241, 0.2);
+        }
+
+        /* Utilities */
+        .text-gradient {
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .table-row-hover:hover {
+            background-color: theme('colors.slate.50/60');
+        }
+        
+        /* Chart specific */
+        .sparkline-path { stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: draw 1.5s ease-out forwards; }
+        @keyframes draw { to { stroke-dashoffset: 0; } }
+    </style>
+</head>
+<!-- 
+  AESTHETIC DNA: Enterprise Premium / FinTech Backoffice
+  UI PARADIGM: Asymmetrical Bento Dashboard with persistent wide sidebar
+  PALETTE: Light Canvas (slate-50), Pure Whites, Indigo->Violet gradients, Warm slate neutrals
+-->
+<body class="flex h-screen overflow-hidden selection:bg-primary-100 selection:text-primary-700">
+
+    <!-- SIDEBAR (Macro-Architecture: Navigation) -->
+    <aside class="w-[280px] bg-surface flex flex-col border-r border-slate-200/60 z-20 flex-shrink-0 shadow-[1px_0_10px_rgba(0,0,0,0.02)]">
+        <!-- Logo Area -->
+        <div class="h-20 px-6 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-[10px] bg-gradient-to-br from-primary-600 to-accent-600 flex items-center justify-center shadow-premium-sm shadow-inner-glow">
+                <i class="ph-bold ph-atom text-white text-lg"></i>
+            </div>
+            <div class="flex flex-col">
+                <span class="font-bold text-[15px] tracking-tight leading-tight">Automata<span class="text-primary-600">OS</span></span>
+                <span class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">Enterprise Ops</span>
+            </div>
+        </div>
+
+        <!-- Navigation Context (Workspace) -->
+        <div class="px-4 py-2">
+            <button class="w-full flex items-center justify-between px-3 py-2 rounded-[10px] hover:bg-slate-50 border border-transparent hover:border-slate-200/50 transition-colors group">
+                <div class="flex items-center gap-3">
+                    <div class="w-6 h-6 rounded bg-slate-100 text-slate-600 flex items-center justify-center text-xs font-bold">JF</div>
+                    <div class="flex flex-col items-start">
+                        <span class="text-xs font-semibold text-slate-800">Japan Financial</span>
+                        <span class="text-[10px] text-slate-500">Backoffice Prod</span>
+                    </div>
+                </div>
+                <i class="ph ph-caret-up-down text-slate-400 group-hover:text-slate-600"></i>
+            </button>
+        </div>
+
+        <!-- Nav Links -->
+        <nav class="flex-1 px-4 py-4 space-y-1 overflow-y-auto">
+            <div class="mb-4">
+                <span class="px-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Core Workflow</span>
+            </div>
+            
+            <!-- Active Item -->
+            <a href="#" class="flex items-center justify-between px-3 py-2.5 rounded-[10px] bg-primary-50/50 border border-primary-100 text-primary-700 relative overflow-hidden group">
+                <div class="absolute left-0 top-0 bottom-0 w-[3px] bg-gradient-to-b from-primary-500 to-accent-500 rounded-r-full"></div>
+                <div class="flex items-center gap-3">
+                    <i class="ph ph-squares-four text-[18px]"></i>
+                    <div class="flex flex-col">
+                        <span class="text-sm font-semibold">ホーム</span>
+                        <span class="text-[10px] opacity-70 font-medium">Dashboard</span>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Inactive Items -->
+            <a href="#" class="flex items-center justify-between px-3 py-2.5 rounded-[10px] text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                <div class="flex items-center gap-3">
+                    <i class="ph ph-queue text-[18px]"></i>
+                    <div class="flex flex-col">
+                        <span class="text-sm font-medium">承認キュー</span>
+                        <span class="text-[10px] text-slate-400">Approvals</span>
+                    </div>
+                </div>
+                <div class="bg-amber-100 text-amber-700 text-[10px] px-1.5 py-0.5 rounded font-bold">12</div>
+            </a>
+
+            <a href="#" class="flex items-center justify-between px-3 py-2.5 rounded-[10px] text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                <div class="flex items-center gap-3">
+                    <i class="ph ph-robot text-[18px]"></i>
+                    <div class="flex flex-col">
+                        <span class="text-sm font-medium">AI ログ</span>
+                        <span class="text-[10px] text-slate-400">Execution Logs</span>
+                    </div>
+                </div>
+            </a>
+
+            <a href="#" class="flex items-center justify-between px-3 py-2.5 rounded-[10px] text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                <div class="flex items-center gap-3">
+                    <i class="ph ph-book-open-text text-[18px]"></i>
+                    <div class="flex flex-col">
+                        <span class="text-sm font-medium">学習データ</span>
+                        <span class="text-[10px] text-slate-400">Training Data</span>
+                    </div>
+                </div>
+            </a>
+
+            <div class="mt-8 mb-4">
+                <span class="px-3 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Reports</span>
+            </div>
+            <a href="#" class="flex items-center justify-between px-3 py-2.5 rounded-[10px] text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                <div class="flex items-center gap-3">
+                    <i class="ph ph-chart-line-up text-[18px]"></i>
+                    <div class="flex flex-col">
+                        <span class="text-sm font-medium">精度の見通し</span>
+                        <span class="text-[10px] text-slate-400">Accuracy Trends</span>
+                    </div>
+                </div>
+            </a>
+        </nav>
+
+        <!-- Bottom Settings -->
+        <div class="p-4 border-t border-slate-200/60">
+            <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-[10px] text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors">
+                <i class="ph ph-gear text-[18px]"></i>
+                <div class="flex flex-col">
+                    <span class="text-sm font-medium">設定</span>
+                    <span class="text-[10px] text-slate-400">Settings</span>
+                </div>
+            </a>
+        </div>
+    </aside>
+
+    <!-- MAIN STAGE (Macro-Architecture: Content Canvas) -->
+    <main class="flex-1 flex flex-col relative w-full h-full bg-mesh">
+        
+        <!-- HEADER (Sticky, Glassmorphic) -->
+        <header class="h-20 w-full px-8 flex items-center justify-between glass-panel sticky top-0 z-30">
+            <!-- Global Search -->
+            <div class="relative w-96 hidden md:block">
+                <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" placeholder="Search tasks, invoice IDs, procedures... (Cmd+K)" 
+                    class="w-full bg-slate-100/50 border border-slate-200/80 rounded-[10px] pl-10 pr-12 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary-500/20 focus:border-primary-500/50 transition-all placeholder:text-slate-400 shadow-inner">
+                <div class="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
+                    <kbd class="hidden sm:inline-block border border-slate-200 rounded px-1.5 text-[10px] font-mono text-slate-400 bg-white">⌘</kbd>
+                    <kbd class="hidden sm:inline-block border border-slate-200 rounded px-1.5 text-[10px] font-mono text-slate-400 bg-white">K</kbd>
+                </div>
+            </div>
+
+            <!-- Right Actions & Profile -->
+            <div class="flex items-center gap-5 ml-auto">
+                <button class="relative text-slate-500 hover:text-slate-800 transition-colors">
+                    <i class="ph ph-bell text-xl"></i>
+                    <span class="absolute 1 top-0 right-0 w-2 h-2 bg-rose-500 rounded-full border border-white"></span>
+                </button>
+                <div class="h-6 w-[1px] bg-slate-200"></div>
+                <button class="flex items-center gap-3 pl-1 group cursor-pointer">
+                    <div class="text-right hidden sm:block">
+                        <div class="text-[13px] font-bold text-slate-900 group-hover:text-primary-600 transition-colors">Shinji Fujiwara</div>
+                        <div class="text-[11px] text-slate-500 font-medium">Operations</div>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80" alt="Shinji Fujiwara Avatar" class="w-9 h-9 rounded-[10px] object-cover ring-2 ring-white shadow-sm border border-slate-100">
+                </button>
+            </div>
+        </header>
+
+        <!-- SCROLLABLE CONTENT AREA -->
+        <div class="flex-1 overflow-y-auto w-full pb-20">
+            <div class="max-w-[1400px] mx-auto px-8 pt-8">
+                
+                <!-- Page Greeting -->
+                <div class="flex justify-between items-end mb-8">
+                    <div>
+                        <h1 class="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
+                            おはようございます、藤原さん <span class="text-xl">👋</span>
+                        </h1>
+                        <p class="text-sm text-slate-500 mt-1 flex items-center gap-2">
+                            <i class="ph ph-calendar-blank"></i>
+                            2023年10月24日 (火) <span class="text-slate-300">|</span> 
+                            <span class="font-mono text-xs bg-slate-100 px-1.5 py-0.5 rounded text-slate-600 border border-slate-200">System Status: Optimal</span>
+                        </p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button class="px-4 py-2 bg-white border border-slate-200 rounded-[10px] text-sm font-medium text-slate-700 shadow-sm hover:bg-slate-50 transition-colors flex items-center gap-2">
+                            <i class="ph ph-export"></i> エクスポート (Export)
+                        </button>
+                        <button class="px-4 py-2 bg-slate-900 rounded-[10px] text-sm font-medium text-white shadow-[0_2px_10px_rgba(15,23,42,0.2)] hover:bg-slate-800 transition-colors flex items-center gap-2 group">
+                            <i class="ph-bold ph-lightning text-amber-400 group-hover:scale-110 transition-transform"></i> 一括処理 (Batch Run)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KPI ROW (Meso-Architecture: Data Density via 4 distinct viz types) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
+                    
+                    <!-- KPI 1: Pending (Warning/Amber focus) -->
+                    <div class="bg-surface rounded-[14px] p-5 card-border shadow-premium-sm hover-lift group relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-[13px] font-semibold text-slate-600">本日の承認待ち</h3>
+                                <p class="text-[11px] text-slate-400 uppercase tracking-wider">Pending Approvals</p>
+                            </div>
+                            <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600">
+                                <i class="ph-fill ph-warning-circle text-lg"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-end gap-3">
+                            <span class="text-3xl font-bold tracking-tight text-slate-900">12</span>
+                            <span class="flex items-center text-xs font-semibold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded mb-1">
+                                <i class="ph-bold ph-trend-up mr-1"></i>+3
+                            </span>
+                        </div>
+                        <!-- Mini Bar Chart Viz -->
+                        <div class="absolute bottom-0 left-0 right-0 h-10 px-5 flex items-end gap-1 opacity-60">
+                            <div class="w-full bg-amber-100 rounded-t-[3px] h-[30%]"></div>
+                            <div class="w-full bg-amber-100 rounded-t-[3px] h-[50%]"></div>
+                            <div class="w-full bg-amber-100 rounded-t-[3px] h-[40%]"></div>
+                            <div class="w-full bg-amber-100 rounded-t-[3px] h-[70%]"></div>
+                            <div class="w-full bg-amber-300 rounded-t-[3px] h-[90%]"></div>
+                            <div class="w-full bg-amber-500 rounded-t-[3px] h-[100%] shadow-[0_0_8px_rgba(245,158,11,0.5)]"></div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 2: Running (Active/Blue focus) -->
+                    <div class="bg-surface rounded-[14px] p-5 card-border shadow-premium-sm hover-lift group relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-[13px] font-semibold text-slate-600">実行中</h3>
+                                <p class="text-[11px] text-slate-400 uppercase tracking-wider">Running Tasks</p>
+                            </div>
+                            <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 relative">
+                                <span class="absolute w-2.5 h-2.5 bg-blue-500 rounded-full animate-pulse-ring top-1 right-1"></span>
+                                <i class="ph-fill ph-gear-six text-lg group-hover:rotate-180 transition-transform duration-700"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-end gap-3 z-10 relative">
+                            <span class="text-3xl font-bold tracking-tight text-slate-900">3</span>
+                            <span class="text-xs font-medium text-slate-500 mb-1">Active jobs</span>
+                        </div>
+                        <div class="mt-3 bg-slate-100 h-1.5 rounded-full overflow-hidden w-2/3">
+                            <div class="progress-bar-animated h-full rounded-full w-[80%]"></div>
+                        </div>
+                    </div>
+
+                    <!-- KPI 3: Completed (Success/Emerald focus with Sparkline) -->
+                    <div class="bg-surface rounded-[14px] p-5 card-border shadow-premium-sm hover-lift group relative overflow-hidden">
+                        <div class="flex justify-between items-start mb-2 relative z-10">
+                            <div>
+                                <h3 class="text-[13px] font-semibold text-slate-600">本日完了</h3>
+                                <p class="text-[11px] text-slate-400 uppercase tracking-wider">Completed Today</p>
+                            </div>
+                            <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
+                                <i class="ph-fill ph-check-circle text-lg"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-end gap-3 relative z-10 mb-2">
+                            <span class="text-3xl font-bold tracking-tight text-slate-900">47</span>
+                            <span class="text-[11px] text-slate-500 font-medium mb-1 border border-slate-200 px-1.5 py-0.5 rounded shadow-sm bg-white">Target: 50</span>
+                        </div>
+                        <!-- Sparkline SVG -->
+                        <div class="absolute bottom-0 left-0 right-0 h-16 pointer-events-none">
+                            <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 30" class="overflow-visible">
+                                <defs>
+                                    <linearGradient id="emerald-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                        <stop offset="0%" stop-color="#10b981" stop-opacity="0.2"/>
+                                        <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
+                                    </linearGradient>
+                                </defs>
+                                <path fill="url(#emerald-grad)" d="M0,30 L0,20 C10,15 20,25 30,18 C40,11 45,22 55,15 C65,8 75,18 85,10 C95,2 98,5 100,2 L100,30 Z"/>
+                                <path fill="none" class="sparkline-path" stroke="#10b981" stroke-width="1.5" d="M0,20 C10,15 20,25 30,18 C40,11 45,22 55,15 C65,8 75,18 85,10 C95,2 98,5 100,2"/>
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- KPI 4: Accuracy (Primary/Indigo focus with High-end Typography) -->
+                    <div class="bg-surface rounded-[14px] p-5 card-border shadow-premium-sm hover-lift group relative overflow-hidden bg-gradient-to-br from-white to-primary-50/30">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h3 class="text-[13px] font-semibold text-primary-800">精度</h3>
+                                <p class="text-[11px] text-primary-600/70 uppercase tracking-wider">AI Accuracy</p>
+                            </div>
+                            <div class="w-8 h-8 rounded-lg bg-primary-100 flex items-center justify-center text-primary-600">
+                                <i class="ph-fill ph-target text-lg group-hover:scale-110 transition-transform"></i>
+                            </div>
+                        </div>
+                        <div class="flex items-baseline gap-2">
+                            <span class="text-4xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-primary-600 to-accent-600">96.2</span>
+                            <span class="text-lg font-bold text-accent-500">%</span>
+                        </div>
+                        <div class="mt-1 flex items-center text-xs font-medium text-emerald-600">
+                            <i class="ph-bold ph-trend-up mr-1 text-sm bg-emerald-100 p-0.5 rounded"></i> <span class="text-slate-500 ml-1">vs 94.8% last week</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MAIN TWO-COLUMN LAYOUT -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-10">
+                    
+                    <!-- Left Column (Span 2): Queues -->
+                    <div class="lg:col-span-2 space-y-8 tracking-tight">
+                        
+                        <!-- PENDING QUEUE -->
+                        <section>
+                            <div class="flex justify-between items-end mb-4">
+                                <div>
+                                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                        <div class="w-2.5 h-2.5 rounded bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.6)]"></div>
+                                        確認が必要です
+                                    </h2>
+                                    <p class="text-[12px] text-slate-500 mt-1">Pending Human Approval — Highest Priority</p>
+                                </div>
+                                <button class="text-[13px] font-medium text-primary-600 hover:text-primary-700 hover:underline">すべて表示 (View All)</button>
+                            </div>
+
+                            <div class="bg-surface border card-border rounded-[14px] shadow-sm overflow-hidden text-sm relative">
+                                <!-- Subtle gradient top border -->
+                                <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-amber-400/50 to-transparent"></div>
+                                
+                                <!-- Header -->
+                                <div class="grid grid-cols-12 gap-4 p-4 border-b border-slate-100 bg-slate-50/50 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                                    <div class="col-span-5">Task Details</div>
+                                    <div class="col-span-3">Running Time</div>
+                                    <div class="col-span-2 text-center">AI Confidence</div>
+                                    <div class="col-span-2 text-right">Action</div>
+                                </div>
+
+                                <!-- Rows -->
+                                <div class="divide-y divide-slate-100">
+                                    <!-- Row 1 -->
+                                    <div class="grid grid-cols-12 gap-4 p-4 items-center table-row-hover transition-colors group">
+                                        <div class="col-span-5 flex items-start gap-4">
+                                            <div class="w-10 h-10 rounded-[8px] bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0 border border-indigo-100 shadow-sm">
+                                                <i class="ph ph-receipt text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-semibold text-slate-900 group-hover:text-primary-600 transition-colors">請求書処理</div>
+                                                <div class="text-[11px] text-slate-500 flex items-center gap-1.5 mt-0.5">
+                                                    <span>Invoice Proc</span> <span class="w-1 h-1 rounded-full bg-slate-300"></span> <span class="font-mono text-[10px]">AP-INV-882</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-span-3 flex flex-col justify-center">
+                                            <span class="text-slate-700 font-medium">10分前</span>
+                                            <span class="text-[10px] text-slate-400">10m ago</span>
+                                        </div>
+                                        <div class="col-span-2 flex items-center justify-center w-full">
+                                            <!-- Badge: Yellow outline for < 90% -->
+                                            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-amber-200 bg-amber-50">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                                <span class="text-[11px] font-bold text-amber-700">82%</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-span-2 flex justify-end">
+                                            <button class="px-3 py-1.5 border border-slate-200 rounded-[8px] text-[12px] font-medium text-slate-700 hover:bg-gradient-to-r hover:from-primary-600 hover:to-accent-600 hover:text-white hover:border-transparent transition-all shadow-sm">
+                                                承認 (Approve)
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Row 2 -->
+                                    <div class="grid grid-cols-12 gap-4 p-4 items-center table-row-hover transition-colors group">
+                                        <div class="col-span-5 flex items-start gap-4">
+                                            <div class="w-10 h-10 rounded-[8px] bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 border border-emerald-100 shadow-sm">
+                                                <i class="ph ph-money text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-semibold text-slate-900 group-hover:text-primary-600 transition-colors">支払承認</div>
+                                                <div class="text-[11px] text-slate-500 flex items-center gap-1.5 mt-0.5">
+                                                    <span>Payment Appr</span> <span class="w-1 h-1 rounded-full bg-slate-300"></span> <span class="font-mono text-[10px]">PAY-REQ-091</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-span-3 flex flex-col justify-center">
+                                            <span class="text-slate-700 font-medium">25分前</span>
+                                            <span class="text-[10px] text-slate-400">25m ago</span>
+                                        </div>
+                                        <div class="col-span-2 flex items-center justify-center w-full">
+                                            <!-- Badge: Green fill for > 95% -->
+                                            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-emerald-200 bg-emerald-100 shadow-inner">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.8)]"></span>
+                                                <span class="text-[11px] font-bold text-emerald-800">97%</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-span-2 flex justify-end">
+                                             <button class="px-3 py-1.5 border border-slate-200 rounded-[8px] text-[12px] font-medium text-slate-700 hover:bg-gradient-to-r hover:from-primary-600 hover:to-accent-600 hover:text-white hover:border-transparent transition-all shadow-sm">
+                                                承認 (Approve)
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Row 3 -->
+                                    <div class="grid grid-cols-12 gap-4 p-4 items-center table-row-hover transition-colors group">
+                                        <div class="col-span-5 flex items-start gap-4">
+                                            <div class="w-10 h-10 rounded-[8px] bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0 border border-rose-100 shadow-sm">
+                                                <i class="ph ph-briefcase text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-semibold text-slate-900 group-hover:text-primary-600 transition-colors">経費精算</div>
+                                                <div class="text-[11px] text-slate-500 flex items-center gap-1.5 mt-0.5">
+                                                    <span>Expense Set.</span> <span class="w-1 h-1 rounded-full bg-slate-300"></span> <span class="font-mono text-[10px]">EXP-OCT-22</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-span-3 flex flex-col justify-center">
+                                            <span class="text-slate-700 font-medium">1時間前</span>
+                                            <span class="text-[10px] text-slate-400">1h ago</span>
+                                        </div>
+                                        <div class="col-span-2 flex items-center justify-center w-full">
+                                            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-amber-200 bg-amber-50">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                                <span class="text-[11px] font-bold text-amber-700">74%</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-span-2 flex justify-end">
+                                             <button class="px-3 py-1.5 border border-slate-200 rounded-[8px] text-[12px] font-medium text-slate-700 hover:bg-gradient-to-r hover:from-primary-600 hover:to-accent-600 hover:text-white hover:border-transparent transition-all shadow-sm">
+                                                レビュー (Review)
+                                            </button>
+                                        </div>
+                                    </div>
+                                    
+                                     <!-- Row 4 -->
+                                     <div class="grid grid-cols-12 gap-4 p-4 items-center table-row-hover transition-colors group">
+                                        <div class="col-span-5 flex items-start gap-4">
+                                            <div class="w-10 h-10 rounded-[8px] bg-violet-50 text-violet-600 flex items-center justify-center flex-shrink-0 border border-violet-100 shadow-sm">
+                                                <i class="ph ph-buildings text-xl"></i>
+                                            </div>
+                                            <div>
+                                                <div class="font-semibold text-slate-900 group-hover:text-primary-600 transition-colors">新規取引先登録</div>
+                                                <div class="text-[11px] text-slate-500 flex items-center gap-1.5 mt-0.5">
+                                                    <span>Vendor Reg</span> <span class="w-1 h-1 rounded-full bg-slate-300"></span> <span class="font-mono text-[10px]">VEN-ADD-14</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-span-3 flex flex-col justify-center">
+                                            <span class="text-slate-700 font-medium">2時間前</span>
+                                            <span class="text-[10px] text-slate-400">2h ago</span>
+                                        </div>
+                                        <div class="col-span-2 flex items-center justify-center w-full">
+                                            <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full border border-emerald-200 bg-emerald-100 shadow-inner">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_4px_rgba(16,185,129,0.8)]"></span>
+                                                <span class="text-[11px] font-bold text-emerald-800">92%</span>
+                                            </div>
+                                        </div>
+                                        <div class="col-span-2 flex justify-end">
+                                             <button class="px-3 py-1.5 border border-slate-200 rounded-[8px] text-[12px] font-medium text-slate-700 hover:bg-gradient-to-r hover:from-primary-600 hover:to-accent-600 hover:text-white hover:border-transparent transition-all shadow-sm">
+                                                承認 (Approve)
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-slate-50 p-2 text-center border-t border-slate-100">
+                                    <button class="text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors py-1 w-full">Load 8 more...</button>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- RUNNING TASKS -->
+                        <section>
+                            <div class="flex justify-between items-end mb-4">
+                                <div>
+                                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                                        <span class="relative flex h-2.5 w-2.5">
+                                          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                                          <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)]"></span>
+                                        </span>
+                                        実行中のジョブ
+                                    </h2>
+                                    <p class="text-[12px] text-slate-500 mt-1">Active Automated Workflows</p>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <!-- Running Card 1 -->
+                                <div class="bg-surface card-border rounded-[14px] p-5 shadow-sm hover-lift relative overflow-hidden">
+                                     <!-- subtle background chart decoration -->
+                                     <i class="ph-fill ph-file-text absolute -right-4 -bottom-4 text-[100px] text-slate-50 opacity-50 pointer-events-none transform -rotate-12"></i>
+                                     
+                                    <div class="flex justify-between items-start mb-4 relative z-10">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full border-2 border-blue-100 text-blue-600 flex items-center justify-center bg-white shadow-sm">
+                                                <i class="ph ph-file-text text-sm"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="font-bold text-[13px] text-slate-800">契約書OCRスキャン</h4>
+                                                <p class="text-[10px] text-slate-400">Contract OCR - DOC-992</p>
+                                            </div>
+                                        </div>
+                                        <span class="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100">Step 3/7</span>
+                                    </div>
+                                    <div class="space-y-1.5 relative z-10">
+                                        <div class="flex justify-between text-[11px]">
+                                            <span class="text-slate-600 font-medium tracking-tight">Extracting clauses via LLM...</span>
+                                            <span class="text-slate-400 font-mono">42%</span>
+                                        </div>
+                                        <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                                            <div class="progress-bar-animated h-full rounded-full w-[42%]"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Running Card 2 -->
+                                <div class="bg-surface card-border rounded-[14px] p-5 shadow-sm hover-lift relative overflow-hidden">
+                                    <i class="ph-fill ph-users absolute -right-4 -bottom-4 text-[100px] text-slate-50 opacity-50 pointer-events-none transform -rotate-12"></i>
+                                    <div class="flex justify-between items-start mb-4 relative z-10">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full border-2 border-indigo-100 text-indigo-600 flex items-center justify-center bg-white shadow-sm">
+                                                <i class="ph ph-users text-sm"></i>
+                                            </div>
+                                            <div>
+                                                <h4 class="font-bold text-[13px] text-slate-800">従業員データ同期</h4>
+                                                <p class="text-[10px] text-slate-400">HR Sync - BATCH-A</p>
+                                            </div>
+                                        </div>
+                                        <span class="text-[11px] font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full border border-primary-100">Step 6/6</span>
+                                    </div>
+                                    <div class="space-y-1.5 relative z-10">
+                                        <div class="flex justify-between text-[11px]">
+                                            <span class="text-slate-600 font-medium tracking-tight">Finalizing Database Write...</span>
+                                            <span class="text-slate-400 font-mono">92%</span>
+                                        </div>
+                                        <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                                            <div class="progress-bar-animated h-full rounded-full w-[92%]"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                    </div>
+
+                    <!-- Right Column (Span 1): Recent Corrections Timeline -->
+                    <div class="lg:col-span-1">
+                        <div class="sticky top-20">
+                            <h2 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+                                <i class="ph ph-clock-counter-clockwise text-slate-400"></i> 最近の修正事項
+                                <span class="text-[11px] font-normal text-slate-400 ml-auto bg-white border border-slate-200 px-2 py-0.5 rounded-full shadow-sm">AI Feedback Loop</span>
+                            </h2>
+                            
+                            <div class="bg-surface border card-border rounded-[14px] shadow-sm p-6 relative">
+                                <!-- Vertical Timeline Line -->
+                                <div class="absolute left-9 top-8 bottom-8 w-[2px] bg-gradient-to-b from-slate-200 via-slate-100 to-transparent rounded-full"></div>
+
+                                <div class="space-y-6 relative">
+                                    
+                                    <!-- Event 1 -->
+                                    <div class="flex gap-4 group">
+                                        <div class="w-6 h-6 rounded-full border-[3px] border-white bg-amber-400 shadow-sm flex-shrink-0 flex items-center justify-center relative z-10 z-10">
+                                            <i class="ph-bold ph-pencil-simple text-white text-[10px]"></i>
+                                        </div>
+                                        <div class="flex flex-col pt-0.5">
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <span class="text-[10px] font-mono text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded">11:42 AM</span>
+                                                <span class="text-[11px] text-slate-500 font-medium">Hiroshi Suzuki</span>
+                                            </div>
+                                            <div class="text-[13px] font-semibold text-slate-800 mb-1">消費税の計算修正</div>
+                                            <div class="bg-slate-50 border border-slate-100 rounded-[10px] p-2.5 text-[11px] text-slate-600 mt-1 relative before:content-[''] before:absolute before:-left-2 before:top-3 before:border-t-[6px] before:border-t-transparent before:border-r-[8px] before:border-r-slate-50 before:border-b-[6px] before:border-b-transparent shadow-sm">
+                                                "Invoice #8802 had non-standard tax rate. Adjusted from 10% to 8% for food items."
+                                            </div>
+                                            <div class="mt-2 flex items-center gap-1.5 text-[10px] text-primary-600 font-semibold bg-primary-50 w-fit px-2 py-0.5 rounded border border-primary-100">
+                                                <i class="ph-bold ph-brain"></i> Model Retrained
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Event 2 -->
+                                    <div class="flex gap-4 group">
+                                        <div class="w-6 h-6 rounded-full border-[3px] border-white bg-slate-300 shadow-sm flex-shrink-0 flex items-center justify-center relative z-10">
+                                            <i class="ph-bold ph-magnifying-glass-plus text-white text-[10px]"></i>
+                                        </div>
+                                        <div class="flex flex-col pt-0.5">
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <span class="text-[10px] font-mono text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded">09:15 AM</span>
+                                                <span class="text-[11px] text-slate-500 font-medium">Yuki Tanaka</span>
+                                            </div>
+                                            <div class="text-[13px] font-semibold text-slate-800 mb-1">金額の不一致フラグ</div>
+                                            <div class="text-[11px] text-slate-500 leading-tight">
+                                                System flagged mismatch between PO and Invoice total. Sent to manual queue.
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Event 3 -->
+                                    <div class="flex gap-4 group">
+                                        <div class="w-6 h-6 rounded-full border-[3px] border-white bg-amber-400 shadow-sm flex-shrink-0 flex items-center justify-center relative z-10">
+                                            <i class="ph-bold ph-pencil-simple text-white text-[10px]"></i>
+                                        </div>
+                                        <div class="flex flex-col pt-0.5">
+                                            <div class="flex items-center gap-2 mb-1">
+                                                <span class="text-[10px] font-mono text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded">Yesterday</span>
+                                                <span class="text-[11px] text-slate-500 font-medium">Shinji Fujiwara</span>
+                                            </div>
+                                            <div class="text-[13px] font-semibold text-slate-800 mb-1">仕入先名のマッピング</div>
+                                            <div class="bg-slate-50 border border-slate-100 rounded-[10px] p-2.5 text-[11px] text-slate-600 mt-1 relative before:content-[''] before:absolute before:-left-2 before:top-3 before:border-t-[6px] before:border-t-transparent before:border-r-[8px] before:border-r-slate-50 before:border-b-[6px] before:border-b-transparent shadow-sm">
+                                                "Mapped 'NEC Corp.' to 'Nippon Electric Company' master record."
+                                            </div>
+                                            <div class="mt-2 flex items-center gap-1.5 text-[10px] text-primary-600 font-semibold bg-primary-50 w-fit px-2 py-0.5 rounded border border-primary-100">
+                                                <i class="ph-bold ph-brain"></i> Rule Added
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                
+                                <button class="w-full mt-6 py-2 border border-slate-200 rounded-[10px] text-xs font-semibold text-slate-600 hover:bg-slate-50 transition-colors shadow-sm">
+                                    すべての履歴 (All History)
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>
