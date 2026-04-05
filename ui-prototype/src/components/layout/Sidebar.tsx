@@ -45,7 +45,7 @@ export default function Sidebar({ onNavigate, variant = 'default' }: SidebarProp
   const isDrawer = variant === 'drawer'
 
   return (
-    <aside className="w-60 shrink-0 border-r border-border/60 bg-sidebar min-h-screen h-full p-4 flex flex-col gap-1">
+    <aside className="w-[260px] shrink-0 border-r border-border/60 bg-sidebar min-h-screen h-full p-4 flex flex-col gap-1">
       <div className="flex items-center gap-2.5 px-3 py-4 mb-2">
         <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-[var(--primary-gradient-to)] flex items-center justify-center shadow-[var(--shadow-cta)]">
           <ShieldCheck className="h-4 w-4 text-white" />
@@ -62,7 +62,7 @@ export default function Sidebar({ onNavigate, variant = 'default' }: SidebarProp
           }
           if (item.type === 'heading') {
             return (
-              <p key={`head-${i}`} className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider px-3 py-1">
+              <p key={`head-${i}`} className="text-[11px] font-semibold text-muted-foreground uppercase tracking-[0.08em] px-3 mt-4 mb-1">
                 {item.label}
               </p>
             )
@@ -75,18 +75,28 @@ export default function Sidebar({ onNavigate, variant = 'default' }: SidebarProp
               onClick={onNavigate}
               className={({ isActive }) =>
                 cn(
-                  "flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
+                  "relative flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors",
                   isActive
-                    ? cn(
-                        "bg-gradient-to-r from-primary/10 to-transparent text-primary font-medium",
-                        isDrawer ? "border-r-2 border-primary" : "border-l-2 border-primary"
-                      )
+                    ? "bg-primary/5 text-primary font-medium"
                     : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground"
                 )
               }
             >
-              <item.icon className="h-4 w-4" />
-              {item.label}
+              {({ isActive }) => (
+                <>
+                  {isActive && (
+                    <span
+                      aria-hidden
+                      className={cn(
+                        "absolute top-1 bottom-1 w-[3px] rounded-r bg-gradient-to-b from-primary to-[var(--primary-gradient-to)]",
+                        isDrawer ? "right-0 rounded-l rounded-r-none" : "left-0"
+                      )}
+                    />
+                  )}
+                  <item.icon className="h-[18px] w-[18px]" />
+                  {item.label}
+                </>
+              )}
             </NavLink>
           )
         })}

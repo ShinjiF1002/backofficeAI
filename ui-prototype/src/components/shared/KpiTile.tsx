@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react"
+import type { ReactNode } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Num } from "./Num"
 import { cn } from "@/lib/utils"
@@ -13,6 +14,8 @@ interface KpiTileProps {
   tone?: KpiTone
   hint?: string
   trendBadge?: React.ReactNode
+  /** Optional visualization slot rendered below value (mini chart, progress bar, etc.) */
+  children?: ReactNode
 }
 
 const toneIconBg: Record<KpiTone, string> = {
@@ -29,9 +32,9 @@ const toneIconBg: Record<KpiTone, string> = {
  * Enterprise-premium KPI card. Icon in top-right tinted circle, large tabular-num value,
  * JP label below with safe line-height.
  */
-export function KpiTile({ label, value, unit, icon: Icon, tone = "indigo", hint, trendBadge }: KpiTileProps) {
+export function KpiTile({ label, value, unit, icon: Icon, tone = "indigo", hint, trendBadge, children }: KpiTileProps) {
   return (
-    <Card variant="default">
+    <Card variant="default" className="overflow-hidden">
       <CardContent className="pt-4 pb-4">
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0 flex-1">
@@ -51,6 +54,7 @@ export function KpiTile({ label, value, unit, icon: Icon, tone = "indigo", hint,
             <Icon className="h-4 w-4" />
           </div>
         </div>
+        {children && <div className="mt-3">{children}</div>}
       </CardContent>
     </Card>
   )

@@ -1,9 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { StatusPill, type StatusPillTone } from '@/components/ui/status-pill'
+import PageHeader from '@/components/shared/PageHeader'
 import { Num } from '@/components/shared/Num'
 import { agents } from '@/data/mockData'
 import { Bot, Activity } from 'lucide-react'
+import type { ReactNode } from 'react'
 
 const statusMeta: Record<string, { label: string; tone: StatusPillTone; pulse: boolean }> = {
   running:    { label: '稼働中',              tone: 'emerald', pulse: true },
@@ -12,15 +14,22 @@ const statusMeta: Record<string, { label: string; tone: StatusPillTone; pulse: b
   disabled:   { label: '停止中',              tone: 'rose',    pulse: false },
 }
 
+function Metric({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="min-w-0">
+      <p className="text-[11px] text-muted-foreground font-semibold leading-[1.4]">{label}</p>
+      <p className="text-sm font-semibold leading-[1.4]">{children}</p>
+    </div>
+  )
+}
+
 export default function AgentsPage() {
   return (
-    <div className="space-y-6 max-w-4xl">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-normal leading-[1.4]">AI エージェント</h1>
-        <p className="text-muted-foreground mt-1">
-          業務ごとに専用の AI エージェントが稼働しています
-        </p>
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        title="AI エージェント"
+        subtitle="業務ごとに専用の AI エージェントが稼働しています"
+      />
 
       <div className="space-y-3">
         {agents.map(agent => {
@@ -29,12 +38,12 @@ export default function AgentsPage() {
             <Card key={agent.id} variant="interactive">
               <CardHeader className="pb-3">
                 <div className="flex items-start justify-between gap-2 flex-wrap">
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-3 min-w-0">
                     <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 shadow-[var(--shadow-premium-sm)]">
                       <Bot className="h-5 w-5 text-primary" />
                     </div>
-                    <div>
-                      <CardTitle className="text-base">{agent.jpName}</CardTitle>
+                    <div className="min-w-0">
+                      <CardTitle className="text-base leading-[1.4]">{agent.jpName}</CardTitle>
                       <p className="text-xs text-muted-foreground mt-0.5 leading-[1.5]">{agent.description}</p>
                     </div>
                   </div>
@@ -65,23 +74,11 @@ export default function AgentsPage() {
                 </div>
 
                 {/* 実績 */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 pt-2 border-t border-border/60">
-                  <div>
-                    <p className="text-[11px] text-muted-foreground font-semibold leading-[1.4]">直近30日実績</p>
-                    <p className="text-sm font-semibold"><Num>{agent.runsLast30d}</Num>件</p>
-                  </div>
-                  <div>
-                    <p className="text-[11px] text-muted-foreground font-semibold leading-[1.4]">精度</p>
-                    <p className="text-sm font-semibold"><Num>{agent.accuracyLast30d}</Num>%</p>
-                  </div>
-                  <div>
-                    <p className="text-[11px] text-muted-foreground font-semibold leading-[1.4]">同時実行数</p>
-                    <p className="text-sm font-semibold">最大 <Num>{agent.maxConcurrentRuns}</Num></p>
-                  </div>
-                  <div>
-                    <p className="text-[11px] text-muted-foreground font-semibold leading-[1.4]">タイムアウト</p>
-                    <p className="text-sm font-semibold"><Num>{agent.timeoutPerStepSec}</Num>秒/ステップ</p>
-                  </div>
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 pt-2 border-t border-border/60">
+                  <Metric label="直近30日実績"><Num>{agent.runsLast30d}</Num>件</Metric>
+                  <Metric label="精度"><Num>{agent.accuracyLast30d}</Num>%</Metric>
+                  <Metric label="同時実行数">最大 <Num>{agent.maxConcurrentRuns}</Num></Metric>
+                  <Metric label="タイムアウト"><Num>{agent.timeoutPerStepSec}</Num>秒/ステップ</Metric>
                 </div>
 
                 {/* 現在の実行 */}

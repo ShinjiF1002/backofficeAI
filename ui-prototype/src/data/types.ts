@@ -258,6 +258,20 @@ export interface RepeatIssue {
   proposalStatus: string
 }
 
+// architecture.md §9: 最近の修正事項（ホーム画面タイムライン用）
+export interface RecentCorrection {
+  id: string
+  /** "11:42" "昨日" 等の表示用ラベル */
+  timestamp: string
+  operator: string
+  workflowName: string
+  /** 1行の JP 要約 */
+  summary: string
+  errorCategory: ErrorCategory
+  /** architecture.md §9 反映先（既存 errorCategoryRouting と同じ3値） */
+  routingOutcome: 'tier1' | 'tier2' | 'log_only'
+}
+
 // architecture.md §7: ガードレール
 export interface Guardrail {
   id: string
