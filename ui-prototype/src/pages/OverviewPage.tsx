@@ -6,7 +6,10 @@ import { Button } from '@/components/ui/button'
 import {
   Server, ShieldCheck, FileText, TrendingUp, AlertTriangle, ArrowRight,
   BookOpen, ChevronDown, ChevronUp, Scale, Wallet, Zap, Info,
+  Compass, GitBranch, Users, KeyRound, Hourglass, Gavel,
+  PhoneOff, CalendarOff, Gauge,
 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import architectureDoc from '../../../docs/architecture.md?raw'
@@ -22,6 +25,118 @@ const tintClasses = {
   slate:   'border-slate-200/60 bg-slate-50/40',
   primary: 'border-primary/20 bg-primary/5',
 } as const
+
+type ConstraintItem = { icon: LucideIcon; title: string; description: string }
+type ConstraintCategory = {
+  icon: LucideIcon
+  title: string
+  subtitle: string
+  tint: 'slate' | 'amber' | 'none'
+  items: ConstraintItem[]
+}
+
+const constraints: ConstraintCategory[] = [
+  {
+    icon: FileText,
+    title: '前提となる事項',
+    subtitle: '本提案の設計判断',
+    tint: 'slate',
+    items: [
+      {
+        icon: GitBranch,
+        title: '既存業務フローを前提に自動化',
+        description: 'BPR（業務プロセス改革）はスコープ外。現行手順の効率性はそのまま受け継ぎます。',
+      },
+      {
+        icon: Users,
+        title: '担当者の継続的な修正協力が必要',
+        description: 'AI の精度向上は修正コメントに依存します。協力が途絶えるとフライホイールが停滞します。',
+      },
+      {
+        icon: KeyRound,
+        title: '既存アプリの改修は原則不要',
+        description: 'ただし SSO 未整備のアプリは、VM 毎の認証基盤整備が情シス部の追加対応として必要。',
+      },
+    ],
+  },
+  {
+    icon: Server,
+    title: '外部環境への依存',
+    subtitle: '他者の協力が必要',
+    tint: 'amber',
+    items: [
+      {
+        icon: Hourglass,
+        title: 'Claude Computer Use のエンタープライズ版 GA',
+        description: '現在 Anthropic 社のリサーチプレビュー段階。本格展開開始は GA 後（時期は未確定）。',
+      },
+      {
+        icon: Gavel,
+        title: '規制当局との方針合意（継続的）',
+        description: '金融庁 AI 利用ガイドライン、FISC 安全対策基準、個人情報保護法への対応方針を法務・コンプラ部門と確定する必要。',
+      },
+    ],
+  },
+  {
+    icon: Info,
+    title: '自動化対象外の業務特性',
+    subtitle: '引き続き人手処理が効率的な領域',
+    tint: 'none',
+    items: [
+      {
+        icon: PhoneOff,
+        title: '画面外情報を必要とする判断',
+        description: '電話での補足、口頭の申し送り、紙メモを参照する業務は本フレームワークで処理できません。',
+      },
+      {
+        icon: CalendarOff,
+        title: '低頻度業務',
+        description: '実績が蓄積せず、信頼レベルの昇格が困難です。',
+      },
+      {
+        icon: Gauge,
+        title: '瞬間的な大量処理が必要な業務',
+        description: '処理速度は人間と同等程度。瞬発力ではなく、夜間・休日稼働を含めた総処理量で効果を発揮します。',
+      },
+    ],
+  },
+]
+
+function ItemRow({ icon: Icon, title, description }: ConstraintItem) {
+  return (
+    <div className="flex items-start gap-3">
+      <div className="w-8 h-8 rounded-md bg-slate-100 text-slate-600 flex items-center justify-center shrink-0 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.6)]">
+        <Icon className="h-4 w-4" />
+      </div>
+      <div className="min-w-0">
+        <p className="text-sm font-semibold leading-[1.4]">{title}</p>
+        <p className="text-xs text-muted-foreground leading-[1.4] mt-0.5">{description}</p>
+      </div>
+    </div>
+  )
+}
+
+function CategoryCard({ icon: Icon, title, subtitle, tint, items }: ConstraintCategory) {
+  const tintClass = tint === 'slate' ? tintClasses.slate
+    : tint === 'amber' ? tintClasses.amber
+    : ''
+  return (
+    <Card size="sm" className={tintClass}>
+      <CardHeader className="pb-2">
+        <CardTitle className="text-base flex items-center gap-2 leading-[1.4]">
+          <Icon className="h-5 w-5 text-muted-foreground shrink-0" />
+          {title}
+        </CardTitle>
+        <p className="text-xs text-muted-foreground leading-[1.4]">{subtitle}</p>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-3">
+          {items.map((item, i) => <ItemRow key={i} {...item} />)}
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
 
 export default function OverviewPage() {
   const navigate = useNavigate()
@@ -240,6 +355,22 @@ export default function OverviewPage() {
           <p className="text-xs text-muted-foreground pt-2 leading-relaxed">
             POC では、自動化に適した業務の見極めも検証項目に含めます。
           </p>
+        </CardContent>
+      </Card>
+
+      {/* 本提案の前提と制約 — 戦略レベルの制約（技術限界と補完関係） */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-lg flex items-center gap-2 leading-[1.4]">
+            <Compass className="h-5 w-5 text-muted-foreground" />
+            本提案の前提と制約
+          </CardTitle>
+          <p className="text-xs text-muted-foreground leading-[1.4]">
+            本フレームワークが成立する条件と、対象範囲外の業務
+          </p>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {constraints.map(cat => <CategoryCard key={cat.title} {...cat} />)}
         </CardContent>
       </Card>
 

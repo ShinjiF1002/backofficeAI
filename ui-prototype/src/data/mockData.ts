@@ -9,7 +9,7 @@ import type {
 export const users: User[] = [
   { id: 'u1', name: '田中 太郎', team: '経理部', role: 'staff' },
   { id: 'u2', name: '佐藤 由紀', team: '経理部', role: 'staff' },
-  { id: 'u3', name: '藤原 真司', team: '経理部', role: 'manager' },
+  { id: 'u3', name: 'Shinji Fujiwara', team: '経理部', role: 'manager' },
 ]
 
 // ── Workflows ──
@@ -780,7 +780,7 @@ export const recentCorrections: RecentCorrection[] = [
   {
     id: 'rc-3',
     timestamp: '昨日',
-    operator: '藤原 真司',
+    operator: 'Shinji Fujiwara',
     workflowName: 'ベンダー登録',
     summary: '「NEC Corp.」を「日本電気株式会社」に正規化',
     errorCategory: 'misunderstanding',
