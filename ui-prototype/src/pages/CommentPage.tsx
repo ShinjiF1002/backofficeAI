@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
 import CategoryIcon from '@/components/shared/CategoryIcon'
+import PageHeader from '@/components/shared/PageHeader'
 import {
   type ErrorCategory,
   errorCategoryLabels,
@@ -60,12 +61,10 @@ export default function CommentPage() {
         <span className="text-foreground font-medium">修正コメント</span>
       </div>
 
-      <div>
-        <h1 className="text-2xl font-semibold tracking-normal leading-[1.4]">修正コメント</h1>
-        <p className="text-muted-foreground mt-1">
-          AI の判断に誤りがあった箇所と、正しい操作を記録してください。このコメントはナレッジとして蓄積されます。
-        </p>
-      </div>
+      <PageHeader
+        title="修正コメント"
+        subtitle="AI の判断に誤りがあった箇所と、正しい操作を記録してください。このコメントはナレッジとして蓄積されます。"
+      />
 
       {/* コンテキスト要約（ExecuteReviewPage で詳細は表示済） */}
       <Card className="bg-muted/30">
@@ -96,12 +95,14 @@ export default function CommentPage() {
           <p className="text-xs text-muted-foreground">カテゴリを選択してください（必須）</p>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div role="radiogroup" aria-label="エラー分類" className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {categoryOrder.map(cat => {
               const isSelected = errorCategory === cat
               return (
                 <button
                   key={cat}
+                  role="radio"
+                  aria-checked={isSelected}
                   onClick={() => setErrorCategory(cat)}
                   className={`text-left p-3 rounded-lg border transition-colors ${
                     isSelected
@@ -109,8 +110,8 @@ export default function CommentPage() {
                       : 'border-border bg-card hover:bg-muted/40'
                   }`}
                 >
-                  <p className="text-sm font-medium">{errorCategoryLabels[cat]}</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">{errorCategoryDescriptions[cat]}</p>
+                  <p className="text-sm font-medium leading-[1.4]">{errorCategoryLabels[cat]}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5 leading-[1.4]">{errorCategoryDescriptions[cat]}</p>
                 </button>
               )
             })}
@@ -159,24 +160,28 @@ export default function CommentPage() {
           <CardTitle className="text-base">このコメントの扱い</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div role="radiogroup" aria-label="コメントの扱い" className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <button
+              role="radio"
+              aria-checked={ruleScope === 'one_off'}
               onClick={() => setRuleScope('one_off')}
               className={`text-left p-3 rounded-lg border transition-colors ${
                 ruleScope === 'one_off' ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border hover:bg-muted/40'
               }`}
             >
-              <p className="text-sm font-medium">この 1 件のみの問題</p>
-              <p className="text-xs text-muted-foreground mt-0.5">ルール化は不要、記録のみ残す</p>
+              <p className="text-sm font-medium leading-[1.4]">この 1 件のみの問題</p>
+              <p className="text-xs text-muted-foreground mt-0.5 leading-[1.4]">ルール化は不要、記録のみ残す</p>
             </button>
             <button
+              role="radio"
+              aria-checked={ruleScope === 'rule_change'}
               onClick={() => setRuleScope('rule_change')}
               className={`text-left p-3 rounded-lg border transition-colors ${
                 ruleScope === 'rule_change' ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border hover:bg-muted/40'
               }`}
             >
-              <p className="text-sm font-medium">ルール化すべき問題</p>
-              <p className="text-xs text-muted-foreground mt-0.5">今後の同種ミスを防ぐ</p>
+              <p className="text-sm font-medium leading-[1.4]">ルール化すべき問題</p>
+              <p className="text-xs text-muted-foreground mt-0.5 leading-[1.4]">今後の同種ミスを防ぐ</p>
             </button>
           </div>
         </CardContent>
@@ -197,30 +202,30 @@ export default function CommentPage() {
               <ChevronRight className="h-3 w-3 text-muted-foreground" />
               {routing === 'tier1' && (
                 <>
-                  <span className="px-2 py-0.5 rounded border border-teal-200 bg-teal-50 text-teal-700 text-[10px] font-medium flex items-center gap-1">
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md border border-teal-200 bg-teal-50 text-teal-700 text-[11px] font-semibold shrink-0">
                     <Lightbulb className="h-3 w-3" /> ナレッジへ追加（即時反映）
                   </span>
-                  <p className="text-[11px] text-muted-foreground mt-2 w-full">
+                  <p className="text-[11px] text-muted-foreground mt-2 w-full leading-[1.4]">
                     AI の文脈情報として即座に全エージェントに共有されます。手順自体は変更されません。
                   </p>
                 </>
               )}
               {routing === 'tier2' && (
                 <>
-                  <span className="px-2 py-0.5 rounded border border-violet-200 bg-violet-50 text-violet-700 text-[10px] font-medium flex items-center gap-1">
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md border border-violet-200 bg-violet-50 text-violet-700 text-[11px] font-semibold shrink-0">
                     <GitPullRequest className="h-3 w-3" /> 提案を自動生成（管理者レビュー待ち）
                   </span>
-                  <p className="text-[11px] text-muted-foreground mt-2 w-full">
+                  <p className="text-[11px] text-muted-foreground mt-2 w-full leading-[1.4]">
                     同種のコメントが 2 件以上集まると、手順変更の提案として管理者レビューに回ります。
                   </p>
                 </>
               )}
               {routing === 'log_only' && (
                 <>
-                  <span className="px-2 py-0.5 rounded border border-slate-200 bg-slate-50 text-slate-700 text-[10px] font-medium flex items-center gap-1">
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md border border-slate-200 bg-slate-50 text-slate-700 text-[11px] font-semibold shrink-0">
                     <FileText className="h-3 w-3" /> 実行ログに記録のみ
                   </span>
-                  <p className="text-[11px] text-muted-foreground mt-2 w-full">
+                  <p className="text-[11px] text-muted-foreground mt-2 w-full leading-[1.4]">
                     入力データの問題は AI の責任ではないため、記録のみ残します。
                   </p>
                 </>

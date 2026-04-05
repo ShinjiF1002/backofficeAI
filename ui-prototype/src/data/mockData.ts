@@ -2,6 +2,7 @@ import type {
   User, Task, Workflow, Comment, Knowledge,
   Proposal, WeeklyMetric, RepeatIssue, Guardrail, RunRecord,
   Agent, LearningMetric, CostMetric, POCPhase, BatchProposal,
+  RecentCorrection,
 } from './types'
 
 // ── Users ──
@@ -755,6 +756,55 @@ export const repeatIssue: RepeatIssue = {
   ],
   proposalStatus: '手順変更の提案を作成済（レビュー待ち）',
 }
+
+// ── 最近の修正事項（Home 右カラム タイムライン用）──
+export const recentCorrections: RecentCorrection[] = [
+  {
+    id: 'rc-1',
+    timestamp: '11:42',
+    operator: '佐藤 由紀',
+    workflowName: '請求書処理',
+    summary: '消費税率を 10% から 8% に修正（食品軽減税率）',
+    errorCategory: 'edge_case',
+    routingOutcome: 'tier1',
+  },
+  {
+    id: 'rc-2',
+    timestamp: '10:15',
+    operator: '田中 太郎',
+    workflowName: '国内送金',
+    summary: 'POと請求額の不一致を差し戻し',
+    errorCategory: 'judgment_gap',
+    routingOutcome: 'tier1',
+  },
+  {
+    id: 'rc-3',
+    timestamp: '昨日',
+    operator: '藤原 真司',
+    workflowName: 'ベンダー登録',
+    summary: '「NEC Corp.」を「日本電気株式会社」に正規化',
+    errorCategory: 'misunderstanding',
+    routingOutcome: 'tier2',
+  },
+  {
+    id: 'rc-4',
+    timestamp: '昨日',
+    operator: '佐藤 由紀',
+    workflowName: '法人口座開設',
+    summary: '代表者IDの添付漏れを指摘',
+    errorCategory: 'ui_change',
+    routingOutcome: 'tier2',
+  },
+  {
+    id: 'rc-5',
+    timestamp: '2日前',
+    operator: '田中 太郎',
+    workflowName: '経費精算',
+    summary: 'OCR読取値の桁誤り（データ起因）',
+    errorCategory: 'data_error',
+    routingOutcome: 'log_only',
+  },
+]
 
 // ── Similar notes for comment screen ──
 export const similarNotes = [

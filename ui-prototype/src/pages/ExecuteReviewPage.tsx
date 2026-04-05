@@ -65,9 +65,9 @@ export default function ExecuteReviewPage() {
                 </p>
                 {/* 主要データ */}
                 {task.keyData.length > 0 && (
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-3 pt-3 border-t border-border/60">
+                  <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mt-3 pt-3 border-t border-border/60">
                     {task.keyData.map(kd => (
-                      <div key={kd.label}>
+                      <div key={kd.label} className="min-w-0">
                         <p className="text-[11px] text-muted-foreground font-semibold leading-[1.4]">{kd.label}</p>
                         <p className="text-sm font-semibold truncate mt-0.5">{kd.value}</p>
                       </div>
@@ -115,7 +115,7 @@ export default function ExecuteReviewPage() {
       )}
 
       {/* sticky action bar */}
-      <div className="sticky bottom-0 -mx-4 md:-mx-8 glass-panel border-t border-border/60 px-4 md:px-8 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] z-30">
+      <div className="sticky bottom-0 -mx-4 md:-mx-6 xl:-mx-8 glass-panel border-t border-border/60 px-4 md:px-6 xl:px-8 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] z-40">
         <div className="max-w-4xl mx-auto">
           <ReviewActions
             hasFailedCheck={hasFailedCheck}

@@ -1,12 +1,17 @@
 import { useState, useCallback } from 'react'
-import { Outlet } from 'react-router-dom'
+import { Outlet, useLocation } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import TopBar from './TopBar'
+import BottomNav from './BottomNav'
 
 export default function AppLayout() {
   const [drawerOpen, setDrawerOpen] = useState(false)
   const openDrawer = useCallback(() => setDrawerOpen(true), [])
   const closeDrawer = useCallback(() => setDrawerOpen(false), [])
+  const { pathname } = useLocation()
+  // Focused-task routes own their own sticky CTA bar; hiding BottomNav prevents
+  // z-index collisions and keeps the user focused on the approve/send-back action.
+  const hideBottomNav = pathname.startsWith('/tasks/')
 
   return (
     <div className="flex min-h-screen bg-canvas">
@@ -37,12 +42,18 @@ export default function AppLayout() {
 
       <div className="flex-1 flex flex-col min-w-0">
         <TopBar onMenuClick={openDrawer} />
-        <main className="flex-1 overflow-auto">
-          <div className="max-w-[1280px] mx-auto px-4 py-5 md:px-8 md:py-6">
+        <main
+          className={`flex-1 overflow-auto ${
+            hideBottomNav ? 'pb-0' : 'pb-[calc(3.5rem+env(safe-area-inset-bottom))] md:pb-0'
+          }`}
+        >
+          <div className="max-w-[1280px] mx-auto px-4 py-5 md:px-6 md:py-6 xl:px-8">
             <Outlet />
           </div>
         </main>
       </div>
+
+      {!hideBottomNav && <BottomNav onMenuClick={openDrawer} />}
     </div>
   )
 }

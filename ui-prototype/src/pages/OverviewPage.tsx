@@ -13,7 +13,15 @@ import architectureDoc from '../../../docs/architecture.md?raw'
 import FlywheelDiagram from '@/components/shared/FlywheelDiagram'
 import POCPhaseBadge from '@/components/shared/POCPhaseBadge'
 import { Num } from '@/components/shared/Num'
+import PageHeader from '@/components/shared/PageHeader'
 import { learningMetrics, costMetrics, pocPhases } from '@/data/mockData'
+
+const tintClasses = {
+  emerald: 'border-emerald-200/60 bg-emerald-50/40',
+  amber:   'border-amber-200/60 bg-amber-50/40',
+  slate:   'border-slate-200/60 bg-slate-50/40',
+  primary: 'border-primary/20 bg-primary/5',
+} as const
 
 export default function OverviewPage() {
   const navigate = useNavigate()
@@ -34,16 +42,16 @@ export default function OverviewPage() {
 
   return (
     <div className="space-y-8 max-w-4xl">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-normal leading-[1.4]">AI によるバックオフィス省力化</h1>
-        <p className="text-muted-foreground mt-1">担当者と同じPC・画面を操作し、定型業務を自動化します</p>
-      </div>
+      <PageHeader
+        title="AI によるバックオフィス省力化"
+        subtitle="担当者と同じPC・画面を操作し、定型業務を自動化します"
+      />
 
       {/* POCフェーズ進捗（現在地の明示） */}
-      <Card className="border-primary/30 bg-primary/5">
+      <Card variant="tinted">
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between flex-wrap gap-2">
-            <CardTitle className="text-base">POC 進行状況</CardTitle>
+            <CardTitle className="text-base leading-[1.4]">POC 進行状況</CardTitle>
             <Badge className="text-xs">現在 Phase 2 実施中</Badge>
           </div>
         </CardHeader>
@@ -96,8 +104,8 @@ export default function OverviewPage() {
 
       {/* 現状の課題 → 本提案の価値 */}
       <div>
-        <h2 className="text-base font-semibold mb-3">現状の課題</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+        <h2 className="text-base font-semibold mb-3 leading-[1.4]">現状の課題</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 lg:gap-4">
           {[
             { icon: FileText, title: '定型作業に人手を割いている', desc: '送金・口座開設・請求書承認など' },
             { icon: AlertTriangle, title: '退職・異動でノウハウが流出', desc: '暗黙知が属人化' },
@@ -106,8 +114,8 @@ export default function OverviewPage() {
             <Card key={item.title}>
               <CardContent className="pt-4 pb-4">
                 <item.icon className="h-6 w-6 text-amber-500 mb-2" />
-                <p className="text-sm font-medium">{item.title}</p>
-                <p className="text-xs text-muted-foreground mt-1">{item.desc}</p>
+                <p className="text-sm font-medium leading-[1.4]">{item.title}</p>
+                <p className="text-xs text-muted-foreground mt-1 leading-[1.4]">{item.desc}</p>
               </CardContent>
             </Card>
           ))}
@@ -119,18 +127,18 @@ export default function OverviewPage() {
       </div>
 
       <div>
-        <h2 className="text-base font-semibold mb-3">本提案のアプローチ</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+        <h2 className="text-base font-semibold mb-3 leading-[1.4]">本提案のアプローチ</h2>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 lg:gap-4">
           {[
-            { icon: Server, title: 'AI が同じ画面を同じ手順で操作', desc: '既存システムの改修は不要', color: 'text-emerald-500' },
-            { icon: ShieldCheck, title: 'ナレッジが組織に蓄積', desc: '退職しても失われない', color: 'text-blue-500' },
-            { icon: TrendingUp, title: '一度の学習が全エージェントに共有', desc: '教育コストは一定', color: 'text-violet-500' },
+            { icon: Server, title: 'AI が同じ画面を同じ手順で操作', desc: '既存システムの改修は不要', color: 'text-emerald-600' },
+            { icon: ShieldCheck, title: 'ナレッジが組織に蓄積', desc: '退職しても失われない', color: 'text-teal-600' },
+            { icon: TrendingUp, title: '一度の学習が全エージェントに共有', desc: '教育コストは一定', color: 'text-violet-600' },
           ].map(item => (
-            <Card key={item.title} className="border-emerald-200 bg-emerald-50/30">
+            <Card key={item.title} className={tintClasses.emerald}>
               <CardContent className="pt-4 pb-4">
                 <item.icon className={`h-6 w-6 ${item.color} mb-2`} />
-                <p className="text-sm font-medium">{item.title}</p>
-                <p className="text-xs text-muted-foreground mt-1">{item.desc}</p>
+                <p className="text-sm font-medium leading-[1.4]">{item.title}</p>
+                <p className="text-xs text-muted-foreground mt-1 leading-[1.4]">{item.desc}</p>
               </CardContent>
             </Card>
           ))}
@@ -151,13 +159,15 @@ export default function OverviewPage() {
               { title: 'すべての操作を記録', desc: '画面キャプチャを含む完全な操作証跡。監査対応。' },
               { title: '信頼は実績で獲得', desc: '初期は全ステップ人間承認。実績に基づき段階的に自律化。高リスク業務は完全自律化しない。' },
             ].map(item => (
-              <div key={item.title} className="flex gap-3 p-3 rounded-md bg-muted/50">
-                <ShieldCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium">{item.title}</p>
-                  <p className="text-xs text-muted-foreground mt-1">{item.desc}</p>
-                </div>
-              </div>
+              <Card key={item.title} size="sm">
+                <CardContent className="flex gap-3 py-3">
+                  <ShieldCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium leading-[1.4]">{item.title}</p>
+                    <p className="text-xs text-muted-foreground mt-1 leading-[1.4]">{item.desc}</p>
+                  </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </CardContent>
@@ -173,22 +183,28 @@ export default function OverviewPage() {
           <p className="text-xs text-muted-foreground">POC で定量的に検証します。本格展開時の ROI 試算の基礎となります。</p>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-sm">
-            <div className="p-3 rounded-md bg-emerald-50 border border-emerald-200">
-              <p className="text-xs text-muted-foreground font-medium mb-1">想定削減効果（月次）</p>
-              <p className="text-lg font-semibold text-emerald-700"><Num>¥{latestCost.estimatedSavingsJpy.toLocaleString()}</Num></p>
-              <p className="text-[11px] text-muted-foreground mt-1">定型業務の人件費換算</p>
-            </div>
-            <div className="p-3 rounded-md bg-amber-50 border border-amber-200">
-              <p className="text-xs text-muted-foreground font-medium mb-1">AI API 費用（月次）</p>
-              <p className="text-lg font-semibold text-amber-700"><Num>¥{latestCost.totalApiCostJpy.toLocaleString()}</Num></p>
-              <p className="text-[11px] text-muted-foreground mt-1">操作ステップごとに画面解析が発生</p>
-            </div>
-            <div className="p-3 rounded-md bg-primary/10 border border-primary/30">
-              <p className="text-xs text-muted-foreground font-medium mb-1">差引ネット効果</p>
-              <p className="text-lg font-semibold text-primary"><Num>¥{latestCost.netBenefitJpy.toLocaleString()}</Num></p>
-              <p className="text-[11px] text-muted-foreground mt-1">2026-03 月の実績</p>
-            </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 lg:gap-4 text-sm">
+            <Card size="sm" className={tintClasses.emerald}>
+              <CardContent className="py-3">
+                <p className="text-xs text-muted-foreground font-medium mb-1 leading-[1.4]">想定削減効果（月次）</p>
+                <p className="text-lg font-semibold text-emerald-700"><Num>¥{latestCost.estimatedSavingsJpy.toLocaleString()}</Num></p>
+                <p className="text-[11px] text-muted-foreground mt-1 leading-[1.4]">定型業務の人件費換算</p>
+              </CardContent>
+            </Card>
+            <Card size="sm" className={tintClasses.amber}>
+              <CardContent className="py-3">
+                <p className="text-xs text-muted-foreground font-medium mb-1 leading-[1.4]">AI API 費用（月次）</p>
+                <p className="text-lg font-semibold text-amber-700"><Num>¥{latestCost.totalApiCostJpy.toLocaleString()}</Num></p>
+                <p className="text-[11px] text-muted-foreground mt-1 leading-[1.4]">操作ステップごとに画面解析が発生</p>
+              </CardContent>
+            </Card>
+            <Card size="sm" className={tintClasses.primary}>
+              <CardContent className="py-3">
+                <p className="text-xs text-muted-foreground font-medium mb-1 leading-[1.4]">差引ネット効果</p>
+                <p className="text-lg font-semibold text-primary"><Num>¥{latestCost.netBenefitJpy.toLocaleString()}</Num></p>
+                <p className="text-[11px] text-muted-foreground mt-1 leading-[1.4]">2026-03 月の実績</p>
+              </CardContent>
+            </Card>
           </div>
           <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
             POC 期間中は通常業務に加えて AI の監督・承認作業が発生するため、一時的に業務負荷が増加します。
@@ -250,24 +266,28 @@ export default function OverviewPage() {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
-            <div className="p-3 rounded-md bg-muted/50">
-              <Badge variant="secondary" className="mb-2">RPA</Badge>
-              <ul className="space-y-1 text-xs text-muted-foreground">
-                <li>+ 動作が完全に決定的、予測可能性が高い</li>
-                <li>+ 高頻度・高速処理に強い</li>
-                <li>- UI の軽微な変更で動作不能に</li>
-                <li>- その都度プログラム修正が必要</li>
-              </ul>
-            </div>
-            <div className="p-3 rounded-md bg-emerald-50/50 border border-emerald-200">
-              <Badge className="mb-2">本提案の AI</Badge>
-              <ul className="space-y-1 text-xs text-muted-foreground">
-                <li>+ マニュアルの「意図」を理解して操作</li>
-                <li>+ UI 変更への耐性が高い</li>
-                <li>+ 使うほど賢くなる（ナレッジ蓄積）</li>
-                <li>- 確率的判断のため、まれに誤操作の可能性</li>
-              </ul>
-            </div>
+            <Card size="sm" className={tintClasses.slate}>
+              <CardContent className="py-3">
+                <Badge variant="secondary" className="mb-2">RPA</Badge>
+                <ul className="space-y-1 text-xs text-muted-foreground leading-[1.5]">
+                  <li>+ 動作が完全に決定的、予測可能性が高い</li>
+                  <li>+ 高頻度・高速処理に強い</li>
+                  <li>- UI の軽微な変更で動作不能に</li>
+                  <li>- その都度プログラム修正が必要</li>
+                </ul>
+              </CardContent>
+            </Card>
+            <Card size="sm" className={tintClasses.emerald}>
+              <CardContent className="py-3">
+                <Badge className="mb-2">本提案の AI</Badge>
+                <ul className="space-y-1 text-xs text-muted-foreground leading-[1.5]">
+                  <li>+ マニュアルの「意図」を理解して操作</li>
+                  <li>+ UI 変更への耐性が高い</li>
+                  <li>+ 使うほど賢くなる（ナレッジ蓄積）</li>
+                  <li>- 確率的判断のため、まれに誤操作の可能性</li>
+                </ul>
+              </CardContent>
+            </Card>
           </div>
           <p className="text-xs text-muted-foreground mt-3">
             両者は補完関係。業務の特性に応じた使い分けを POC で検討します。

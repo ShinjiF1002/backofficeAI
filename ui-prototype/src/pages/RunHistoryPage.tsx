@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { runHistory } from '@/data/mockData'
 import CategoryIcon from '@/components/shared/CategoryIcon'
+import PageHeader from '@/components/shared/PageHeader'
 import { Num } from '@/components/shared/Num'
 import { KpiTile } from '@/components/shared/KpiTile'
 import { StatusPill, type StatusPillTone } from '@/components/ui/status-pill'
@@ -28,16 +29,14 @@ export default function RunHistoryPage() {
   const totalCost = runHistory.reduce((sum, r) => sum + r.apiCostJpy, 0)
 
   return (
-    <div className="space-y-6 max-w-4xl">
-      <div>
-        <h1 className="text-2xl font-semibold tracking-normal leading-[1.4]">実行履歴</h1>
-        <p className="text-muted-foreground mt-1">
-          AI が実行したすべての業務処理の記録。完全な操作証跡を保持しています。
-        </p>
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        title="実行履歴"
+        subtitle="AI が実行したすべての業務処理の記録。完全な操作証跡を保持しています。"
+      />
 
       {/* Summary */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
         <KpiTile label="総実行件数" value={totalRuns} unit="件" icon={Database} tone="indigo" />
         <KpiTile label="完了" value={completed} unit="件" icon={CheckCircle2} tone="emerald" />
         <KpiTile label="実行中・差し戻し" value={inProgress + sentBack} unit="件" icon={Loader2} tone="amber" />
@@ -47,57 +46,59 @@ export default function RunHistoryPage() {
       {/* Run list */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-base">実行記録</CardTitle>
-          <p className="text-xs text-muted-foreground">各実行には、画面キャプチャ・実行ログ・承認記録・修正コメントが紐づいています</p>
+          <CardTitle className="text-base leading-[1.4]">実行記録</CardTitle>
+          <p className="text-xs text-muted-foreground leading-[1.4]">各実行には、画面キャプチャ・実行ログ・承認記録・修正コメントが紐づいています</p>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
             {runHistory.map(run => {
               const st = statusMeta[run.status]
               return (
-                <div key={run.id} className="p-3 rounded-lg border border-border/60 bg-card shadow-[var(--shadow-premium-sm)]">
-                  <div className="flex items-start gap-3">
-                    <CategoryIcon category={run.procedureCategory} size="sm" />
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2 flex-wrap">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-sm font-semibold">{run.procedureJp}</span>
-                          <Num className="text-[11px] text-muted-foreground font-num">{run.id}</Num>
-                          <StatusPill tone={st.tone}>{st.label}</StatusPill>
+                <Card key={run.id} variant="default" size="sm">
+                  <CardContent className="p-3">
+                    <div className="flex items-start gap-3">
+                      <CategoryIcon category={run.procedureCategory} size="sm" />
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2 flex-wrap">
+                          <div className="flex items-center gap-2 min-w-0 flex-wrap">
+                            <span className="text-sm font-semibold leading-[1.4]">{run.procedureJp}</span>
+                            <Num className="text-[11px] text-muted-foreground font-num truncate">{run.id}</Num>
+                            <StatusPill tone={st.tone}>{st.label}</StatusPill>
+                          </div>
+                          <Num className="text-[11px] text-muted-foreground font-num tabular-nums shrink-0">{run.startedAt}</Num>
                         </div>
-                        <Num className="text-[11px] text-muted-foreground font-num">{run.startedAt}</Num>
-                      </div>
-                      <div className="flex items-center gap-3 mt-2 text-[11px] text-muted-foreground flex-wrap">
-                        <span className="flex items-center gap-1">
-                          <Clock className="h-3 w-3" />
-                          {formatElapsed(run.elapsedSec)}
-                        </span>
-                        <span className="flex items-center gap-1">
-                          <User className="h-3 w-3" />
-                          {run.humanApprovals}/{run.stepCount} 承認
-                        </span>
-                        {run.hasScreenshots && (
-                          <span className="flex items-center gap-1 text-primary/70">
-                            <Camera className="h-3 w-3" />
-                            画面キャプチャあり
+                        <div className="flex items-center gap-2 sm:gap-3 mt-2 text-[10px] sm:text-[11px] text-muted-foreground flex-wrap">
+                          <span className="flex items-center gap-1 shrink-0">
+                            <Clock className="h-3 w-3" />
+                            {formatElapsed(run.elapsedSec)}
                           </span>
-                        )}
-                        {run.hasFeedback && (
-                          <span className="flex items-center gap-1 text-amber-600">
-                            <FileText className="h-3 w-3" />
-                            修正コメントあり
+                          <span className="flex items-center gap-1 shrink-0 tabular-nums">
+                            <User className="h-3 w-3" />
+                            <Num>{run.humanApprovals}</Num>/<Num>{run.stepCount}</Num> 承認
                           </span>
+                          {run.hasScreenshots && (
+                            <span className="flex items-center gap-1 text-primary/70 shrink-0">
+                              <Camera className="h-3 w-3" />
+                              画面キャプチャあり
+                            </span>
+                          )}
+                          {run.hasFeedback && (
+                            <span className="flex items-center gap-1 text-amber-600 shrink-0">
+                              <FileText className="h-3 w-3" />
+                              修正コメントあり
+                            </span>
+                          )}
+                          <span className="ml-auto tabular-nums shrink-0"><Num>¥{run.apiCostJpy}</Num></span>
+                        </div>
+                        {run.approvedBy && (
+                          <p className="text-[11px] text-muted-foreground mt-1 leading-[1.4]">
+                            承認者: <strong>{run.approvedBy}</strong>
+                          </p>
                         )}
-                        <span className="ml-auto"><Num>¥{run.apiCostJpy}</Num></span>
                       </div>
-                      {run.approvedBy && (
-                        <p className="text-[11px] text-muted-foreground mt-1">
-                          承認者: <strong>{run.approvedBy}</strong>
-                        </p>
-                      )}
                     </div>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               )
             })}
           </div>
