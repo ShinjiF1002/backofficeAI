@@ -1,20 +1,31 @@
 import { useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useApp } from '@/context/AppContext'
-import AiJudgmentDisplay from '@/components/comment/AiJudgmentDisplay'
-import CommentForm from '@/components/comment/CommentForm'
-import SimilarNote from '@/components/comment/SimilarNote'
-import ScreenshotPlaceholder from '@/components/review/ScreenshotPlaceholder'
-import ChecksList from '@/components/review/ChecksList'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { similarNotes } from '@/data/mockData'
+import { Textarea } from '@/components/ui/textarea'
+import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
+import CategoryIcon from '@/components/shared/CategoryIcon'
+import {
+  type ErrorCategory,
+  errorCategoryLabels,
+  errorCategoryDescriptions,
+  errorCategoryRouting,
+} from '@/data/types'
+import { ChevronRight, Bot, Lightbulb, GitPullRequest, FileText } from 'lucide-react'
+
+const categoryOrder: ErrorCategory[] = ['misunderstanding', 'ui_change', 'edge_case', 'judgment_gap', 'data_error']
 
 export default function CommentPage() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
   const { tasks, sendBackTask } = useApp()
   const [commentText, setCommentText] = useState('')
+  const [errorCategory, setErrorCategory] = useState<ErrorCategory | null>(null)
+  const [before, setBefore] = useState('')
+  const [after, setAfter] = useState('')
+  const [ruleScope, setRuleScope] = useState<'one_off' | 'rule_change'>('rule_change')
 
   const task = tasks.find(t => t.id === id)
   if (!task) {
@@ -28,82 +39,210 @@ export default function CommentPage() {
 
   const currentStep = task.steps.find(s => s.status === 'current')
 
-  const handleQuote = (text: string) => {
-    setCommentText(prev => prev ? `${prev}\n${text}` : text)
-  }
-
   const handleSubmit = () => {
     sendBackTask(task.id)
     navigate('/home')
   }
 
+  const routing = errorCategory ? errorCategoryRouting[errorCategory] : null
+  const canSubmit = commentText.trim().length > 0 && errorCategory !== null
+
   return (
-    <div className="space-y-8 max-w-4xl">
+    <div className="space-y-6 max-w-3xl pb-8">
+      {/* パンくず */}
+      <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
+        <button onClick={() => navigate('/home')} className="hover:text-foreground">ホーム</button>
+        <ChevronRight className="h-3 w-3" />
+        <button onClick={() => navigate(`/tasks/${task.id}`)} className="hover:text-foreground">
+          {task.workflowName} {task.id}
+        </button>
+        <ChevronRight className="h-3 w-3" />
+        <span className="text-foreground font-medium">修正コメント</span>
+      </div>
+
       <div>
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <Button variant="ghost" size="sm" onClick={() => navigate(`/tasks/${task.id}`)}>← 戻る</Button>
-          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">修正コメント</h1>
-        </div>
-        <p className="text-muted-foreground mt-2">
-          AIの判断に誤りがあった箇所と、正しい操作を記録してください。このコメントはナレッジとして蓄積されます。
+        <h1 className="text-2xl font-semibold tracking-normal leading-[1.4]">修正コメント</h1>
+        <p className="text-muted-foreground mt-1">
+          AI の判断に誤りがあった箇所と、正しい操作を記録してください。このコメントはナレッジとして蓄積されます。
         </p>
       </div>
 
-      {/* Evidence context — screenshot + checks */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card>
+      {/* コンテキスト要約（ExecuteReviewPage で詳細は表示済） */}
+      <Card className="bg-muted/30">
+        <CardContent className="pt-3 pb-3">
+          <div className="flex items-center gap-3">
+            <CategoryIcon category={task.category} size="sm" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium">{task.workflowName} · {currentStep?.name}</p>
+              <p className="text-xs text-muted-foreground truncate">
+                {task.keyData[0]?.value}
+                {task.keyData[1] && ` / ${task.keyData[1].value}`}
+              </p>
+            </div>
+          </div>
+          {task.aiJudgment && (
+            <div className="mt-3 pt-3 border-t flex items-start gap-2">
+              <Bot className="h-3.5 w-3.5 text-muted-foreground shrink-0 mt-0.5" />
+              <p className="text-xs text-muted-foreground italic">{task.aiJudgment}</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* エラー分類 — architecture.md §9 */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">何が問題でしたか？</CardTitle>
+          <p className="text-xs text-muted-foreground">カテゴリを選択してください（必須）</p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {categoryOrder.map(cat => {
+              const isSelected = errorCategory === cat
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setErrorCategory(cat)}
+                  className={`text-left p-3 rounded-lg border transition-colors ${
+                    isSelected
+                      ? 'border-primary bg-primary/5 ring-1 ring-primary/30'
+                      : 'border-border bg-card hover:bg-muted/40'
+                  }`}
+                >
+                  <p className="text-sm font-medium">{errorCategoryLabels[cat]}</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{errorCategoryDescriptions[cat]}</p>
+                </button>
+              )
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 詳細記述 */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">詳細コメント</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <Textarea
+            placeholder="何が間違っていたか、正しい操作は何かを記入してください..."
+            value={commentText}
+            onChange={e => setCommentText(e.target.value)}
+            rows={4}
+            className="resize-none"
+          />
+          {/* before/after（任意） */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">修正前の値（任意）</label>
+              <Input
+                placeholder="例: ¥50,000（四捨五入）"
+                value={before}
+                onChange={e => setBefore(e.target.value)}
+              />
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1 block">修正後の値（任意）</label>
+              <Input
+                placeholder="例: ¥55,000（切り捨て）"
+                value={after}
+                onChange={e => setAfter(e.target.value)}
+              />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* スコープ選択 */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">このコメントの扱い</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button
+              onClick={() => setRuleScope('one_off')}
+              className={`text-left p-3 rounded-lg border transition-colors ${
+                ruleScope === 'one_off' ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border hover:bg-muted/40'
+              }`}
+            >
+              <p className="text-sm font-medium">この 1 件のみの問題</p>
+              <p className="text-xs text-muted-foreground mt-0.5">ルール化は不要、記録のみ残す</p>
+            </button>
+            <button
+              onClick={() => setRuleScope('rule_change')}
+              className={`text-left p-3 rounded-lg border transition-colors ${
+                ruleScope === 'rule_change' ? 'border-primary bg-primary/5 ring-1 ring-primary/30' : 'border-border hover:bg-muted/40'
+              }`}
+            >
+              <p className="text-sm font-medium">ルール化すべき問題</p>
+              <p className="text-xs text-muted-foreground mt-0.5">今後の同種ミスを防ぐ</p>
+            </button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 学習結果プレビュー */}
+      {errorCategory && (
+        <Card variant="tinted">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm">操作画面の状況</CardTitle>
+            <CardTitle className="text-sm flex items-center gap-2">
+              <Lightbulb className="h-4 w-4 text-primary" />
+              このコメントが学習につながる流れ
+            </CardTitle>
           </CardHeader>
           <CardContent>
-            <ScreenshotPlaceholder
-              workflowName={task.workflowName}
-              stepName={currentStep?.name ?? ''}
-              hasError={currentStep?.checks.some(c => c.status === 'ng') ?? false}
-              size="compact"
-            />
+            <div className="flex items-center gap-2 text-xs flex-wrap">
+              <Badge variant="outline" className="text-[10px]">分類: {errorCategoryLabels[errorCategory]}</Badge>
+              <ChevronRight className="h-3 w-3 text-muted-foreground" />
+              {routing === 'tier1' && (
+                <>
+                  <span className="px-2 py-0.5 rounded border border-teal-200 bg-teal-50 text-teal-700 text-[10px] font-medium flex items-center gap-1">
+                    <Lightbulb className="h-3 w-3" /> ナレッジへ追加（即時反映）
+                  </span>
+                  <p className="text-[11px] text-muted-foreground mt-2 w-full">
+                    AI の文脈情報として即座に全エージェントに共有されます。手順自体は変更されません。
+                  </p>
+                </>
+              )}
+              {routing === 'tier2' && (
+                <>
+                  <span className="px-2 py-0.5 rounded border border-violet-200 bg-violet-50 text-violet-700 text-[10px] font-medium flex items-center gap-1">
+                    <GitPullRequest className="h-3 w-3" /> 提案を自動生成（管理者レビュー待ち）
+                  </span>
+                  <p className="text-[11px] text-muted-foreground mt-2 w-full">
+                    同種のコメントが 2 件以上集まると、手順変更の提案として管理者レビューに回ります。
+                  </p>
+                </>
+              )}
+              {routing === 'log_only' && (
+                <>
+                  <span className="px-2 py-0.5 rounded border border-slate-200 bg-slate-50 text-slate-700 text-[10px] font-medium flex items-center gap-1">
+                    <FileText className="h-3 w-3" /> 実行ログに記録のみ
+                  </span>
+                  <p className="text-[11px] text-muted-foreground mt-2 w-full">
+                    入力データの問題は AI の責任ではないため、記録のみ残します。
+                  </p>
+                </>
+              )}
+            </div>
           </CardContent>
         </Card>
-
-        <div className="space-y-4">
-          <AiJudgmentDisplay judgment={task.aiJudgment ?? '判断記録なし'} />
-          {currentStep && currentStep.checks.length > 0 && (
-            <Card>
-              <CardHeader className="pb-2">
-                <CardTitle className="text-sm">チェック結果</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ChecksList checks={currentStep.checks} />
-              </CardContent>
-            </Card>
-          )}
-        </div>
-      </div>
-
-      <CommentForm
-        value={commentText}
-        onChange={setCommentText}
-      />
-
-      <div className="space-y-3">
-        <h3 className="text-sm font-medium text-muted-foreground">過去の類似コメント</h3>
-        {similarNotes.map((note, i) => (
-          <SimilarNote key={i} text={note.text} onQuote={handleQuote} />
-        ))}
-      </div>
+      )}
 
       <div className="flex flex-wrap gap-2 sm:gap-3 pt-2">
-        <Button className="h-10 md:h-8" onClick={handleSubmit} disabled={!commentText.trim()}>
+        <Button variant="brand" size="cta" onClick={handleSubmit} disabled={!canSubmit}>
           送信して続行
         </Button>
-        <Button variant="outline" className="h-10 md:h-8" onClick={() => navigate(`/tasks/${task.id}`)}>
+        <Button variant="outline" size="tap" onClick={() => navigate(`/tasks/${task.id}`)}>
           キャンセル
         </Button>
+        {!canSubmit && (
+          <p className="text-xs text-muted-foreground self-center">
+            カテゴリとコメント内容を入力してください
+          </p>
+        )}
       </div>
-
-      <p className="text-xs text-muted-foreground">
-        送信後: AIがこのフィードバックを学習します。類似の問題が検出された場合、変更提案が自動生成されることがあります。
-      </p>
     </div>
   )
 }

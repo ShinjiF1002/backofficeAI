@@ -1,23 +1,34 @@
 import { useState } from 'react'
 import type { Proposal } from '@/data/types'
+import { changeTypeLabels, riskLevelLabels } from '@/data/types'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
-import { MessageSquareQuote, FileText, TrendingUp } from 'lucide-react'
+import { StatusPill, type StatusPillTone } from '@/components/ui/status-pill'
+import { MessageSquareQuote, FileText, TrendingUp, Shield } from 'lucide-react'
+import { Num } from '@/components/shared/Num'
 
 interface ProposalCardProps {
   proposal: Proposal
   onStatusChange: (id: string, status: Proposal['status']) => void
 }
 
-const riskColors = {
-  low: 'bg-emerald-100 text-emerald-800',
-  medium: 'bg-amber-100 text-amber-800',
-  high: 'bg-red-100 text-red-800',
+const riskTone: Record<string, StatusPillTone> = {
+  low: 'emerald',
+  medium: 'amber',
+  high: 'rose',
 }
-const riskLabels = { low: '低', medium: '中', high: '高' }
+
 const statusLabels: Record<string, string> = { open: '未対応', approved: '承認済', rejected: '却下', held: '保留' }
+
+const changeTypeColors: Record<string, string> = {
+  hint_update: 'border-blue-200 bg-blue-50 text-blue-700',
+  step_add: 'border-violet-200 bg-violet-50 text-violet-700',
+  validation_change: 'border-amber-200 bg-amber-50 text-amber-700',
+  guardrail_add: 'border-rose-200 bg-rose-50 text-rose-700',
+  guardrail_modify: 'border-rose-200 bg-rose-50 text-rose-700',
+}
 
 export default function ProposalCard({ proposal, onStatusChange }: ProposalCardProps) {
   const [comment, setComment] = useState(proposal.adminComment ?? '')
@@ -26,12 +37,20 @@ export default function ProposalCard({ proposal, onStatusChange }: ProposalCardP
   return (
     <Card className={isResolved ? 'opacity-60' : ''}>
       <CardHeader className="pb-3">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <CardTitle className="text-base">提案 #{proposal.id}</CardTitle>
-          <div className="flex items-center gap-2 flex-wrap">
-            <Badge className={riskColors[proposal.riskLevel]}>
-              リスク: {riskLabels[proposal.riskLevel]}
-            </Badge>
+        <div className="flex items-start justify-between gap-2 flex-wrap">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 flex-wrap mb-1">
+              <CardTitle className="text-base">提案 #{proposal.id}</CardTitle>
+              <span className={`text-[11px] font-semibold px-1.5 py-0.5 rounded border ${changeTypeColors[proposal.changeType]}`}>
+                {changeTypeLabels[proposal.changeType]}
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground truncate">対象: {proposal.targetProcedureJp}</p>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap shrink-0">
+            <StatusPill tone={riskTone[proposal.riskLevel]}>
+              リスク: {riskLevelLabels[proposal.riskLevel]}
+            </StatusPill>
             {isResolved && (
               <Badge variant={proposal.status === 'approved' ? 'default' : 'secondary'}>
                 {statusLabels[proposal.status]}
@@ -41,7 +60,7 @@ export default function ProposalCard({ proposal, onStatusChange }: ProposalCardP
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* What / Why / Scope */}
+        {/* What / Why */}
         <div className="space-y-3">
           <div>
             <p className="text-xs text-muted-foreground font-medium mb-1">変更内容</p>
@@ -53,43 +72,57 @@ export default function ProposalCard({ proposal, onStatusChange }: ProposalCardP
           </div>
         </div>
 
-        {/* Diff visualization — hardcoded static UI (Proposal type has no diff field) */}
+        {/* 実 diff 表示 */}
         <div className="rounded-md border bg-muted/30 p-3 space-y-1.5">
           <p className="text-xs font-medium text-muted-foreground mb-2 flex items-center gap-1.5">
             <FileText className="h-3.5 w-3.5" />
-            変更差分
+            変更差分: {proposal.diff.pathJp}
           </p>
-          <div className="text-xs font-mono bg-red-50 text-red-700 px-2 py-1 rounded border border-red-200 line-through break-words">
-            - 添付ファイルタブで証憑を確認
-          </div>
-          <div className="text-xs font-mono bg-emerald-50 text-emerald-700 px-2 py-1 rounded border border-emerald-200 break-words">
-            + 添付ファイルタブで証憑を確認
-          </div>
-          <div className="text-xs font-mono bg-emerald-50 text-emerald-700 px-2 py-1 rounded border border-emerald-200 break-words">
-            + PDFの場合はスクロールして全ページ確認が必要
-          </div>
-        </div>
-
-        {/* Impact & expected effect */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          <div className="p-2.5 rounded-md bg-muted/50">
-            <p className="text-xs text-muted-foreground font-medium mb-1">影響する手順</p>
-            <div className="flex flex-wrap gap-1">
-              {proposal.scopeWorkflows.map(w => (
-                <Badge key={w} variant="outline" className="text-[10px]">{w}</Badge>
-              ))}
+          {proposal.diff.before.map((line, i) => (
+            <div key={`before-${i}`} className="text-xs font-mono bg-red-50 text-red-700 px-2 py-1 rounded border border-red-200 line-through break-words">
+              − {line}
             </div>
-            <p className="text-[11px] text-muted-foreground mt-1">直近 {proposal.scopeCaseCount} 件に適用</p>
-          </div>
-          <div className="p-2.5 rounded-md bg-emerald-50/50 border border-emerald-100">
-            <p className="text-xs text-muted-foreground font-medium mb-1 flex items-center gap-1">
-              <TrendingUp className="h-3 w-3" /> 期待効果
+          ))}
+          {proposal.diff.after.map((line, i) => (
+            <div key={`after-${i}`} className="text-xs font-mono bg-emerald-50 text-emerald-700 px-2 py-1 rounded border border-emerald-200 break-words">
+              + {line}
+            </div>
+          ))}
+        </div>
+
+        {/* 影響分析 */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="p-3 rounded-md bg-amber-50/50 border border-amber-200">
+            <p className="text-xs text-muted-foreground font-medium mb-1.5 flex items-center gap-1">
+              <TrendingUp className="h-3 w-3" /> 影響範囲
             </p>
-            <p className="text-xs">承認により、同種のミスの再発を防止。</p>
+            <p className="text-sm">
+              直近30日で <Num className="font-semibold">{proposal.impactAnalysis.affectedRunsLast30d}</Num>件 に影響
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              対象業務: {proposal.scopeWorkflows.join(', ')}
+            </p>
+          </div>
+          <div className="p-3 rounded-md bg-emerald-50/50 border border-emerald-200">
+            <p className="text-xs text-muted-foreground font-medium mb-1.5 flex items-center gap-1">
+              <Shield className="h-3 w-3" /> 期待効果
+            </p>
+            <p className="text-sm">
+              過去 <Num className="font-semibold">{proposal.impactAnalysis.preventableMissesCount}</Num>件 の差し戻しを防止可能
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              {proposal.impactAnalysis.riskAssessment}
+            </p>
           </div>
         </div>
 
-        {/* Voices */}
+        {/* リスク根拠 */}
+        <div className="p-3 rounded-md bg-muted/30 border border-border">
+          <p className="text-xs font-medium text-muted-foreground mb-1">リスク評価の根拠</p>
+          <p className="text-xs">{proposal.riskRationale}</p>
+        </div>
+
+        {/* Voices — 根拠となる現場コメント */}
         <div>
           <p className="text-xs font-medium mb-2 flex items-center gap-1.5 text-muted-foreground">
             <MessageSquareQuote className="h-3.5 w-3.5" />
@@ -98,7 +131,7 @@ export default function ProposalCard({ proposal, onStatusChange }: ProposalCardP
           <div className="space-y-1.5 pl-1">
             {proposal.voices.map((v, i) => (
               <div key={i} className="text-sm flex flex-wrap sm:flex-nowrap gap-x-2 gap-y-1 py-1 px-2 rounded bg-muted/30">
-                <span className="text-muted-foreground shrink-0 text-xs">{v.date}</span>
+                <span className="text-muted-foreground shrink-0 text-xs font-mono">{v.date}</span>
                 <span className="font-medium shrink-0 text-xs">{v.author}:</span>
                 <span className="text-muted-foreground text-xs min-w-0 break-words basis-full sm:basis-auto">{v.text}</span>
               </div>
@@ -120,13 +153,13 @@ export default function ProposalCard({ proposal, onStatusChange }: ProposalCardP
             </div>
 
             <div className="flex flex-wrap gap-2 pt-1">
-              <Button size="sm" className="h-9 md:h-7" onClick={() => onStatusChange(proposal.id, 'approved')}>
+              <Button variant="brand" size="tap" onClick={() => onStatusChange(proposal.id, 'approved')}>
                 承認
               </Button>
-              <Button size="sm" variant="destructive" className="h-9 md:h-7" onClick={() => onStatusChange(proposal.id, 'rejected')}>
+              <Button variant="destructive" size="tap" onClick={() => onStatusChange(proposal.id, 'rejected')}>
                 却下
               </Button>
-              <Button size="sm" variant="secondary" className="h-9 md:h-7" onClick={() => onStatusChange(proposal.id, 'held')}>
+              <Button variant="secondary" size="tap" onClick={() => onStatusChange(proposal.id, 'held')}>
                 保留
               </Button>
             </div>

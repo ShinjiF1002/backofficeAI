@@ -1,27 +1,119 @@
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useApp } from '@/context/AppContext'
 import ModeComparison from '@/components/upgrade/ModeComparison'
 import UpgradeDetail from '@/components/upgrade/UpgradeDetail'
-import { upgradeTarget } from '@/data/mockData'
+import { upgradeTarget, workflows } from '@/data/mockData'
+import { trustModeLabels } from '@/data/types'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { CheckCircle2, Info, AlertTriangle, ArrowRight } from 'lucide-react'
-
-const modeLabels: Record<string, string> = {
-  'full-step': '全ステップ承認',
-  'checkpoint': 'チェックポイント承認',
-  'post-check': '事後確認',
-}
+import { CheckCircle2, Info, AlertTriangle, ArrowRight, ChevronRight } from 'lucide-react'
 
 export default function UpgradePage() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const { upgradeApproved, approveUpgrade } = useApp()
+
+  const wfId = searchParams.get('wf')
+  const selectedWf = wfId ? workflows.find(w => w.id === wfId) : null
+
+  // 昇格候補の workflow（昇格可能 + 現在 supervised モード）
+  const candidates = workflows.filter(w => w.recommendation.kind === 'ready_to_upgrade')
 
   const keepHuman = upgradeTarget.steps.filter(s => s.next === 'human').map(s => s.name)
   const autoRun = upgradeTarget.steps.filter(s => s.next === 'ai').map(s => s.name)
 
+  // 対象未指定時: 候補一覧を表示
+  if (!wfId || !selectedWf) {
+    return (
+      <div className="space-y-6 max-w-4xl">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-normal leading-[1.4]">信頼レベル昇格</h1>
+          <p className="text-muted-foreground mt-1">
+            実績が十分な業務について、承認作業を段階的に削減します
+          </p>
+        </div>
+
+        <Alert variant="info">
+          <Info className="h-4 w-4" />
+          <AlertDescription className="text-sm">
+            <strong>信頼レベル昇格とは:</strong> 十分な実績を積んだ業務について、人間の承認ステップを削減し処理効率を向上させます。
+            高リスクステップ（金額確認、最終承認など）は常に人間が確認します。
+          </AlertDescription>
+        </Alert>
+
+        {candidates.length > 0 ? (
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">昇格候補の業務</CardTitle>
+              <p className="text-xs text-muted-foreground">精度が昇格閾値（95%）を超過し、十分な実績を積んだ業務</p>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                {candidates.map(wf => (
+                  <button
+                    key={wf.id}
+                    onClick={() => navigate(`/upgrade?wf=${wf.id}`)}
+                    className="w-full text-left p-3 rounded-lg border border-emerald-200 bg-emerald-50/30 hover:bg-emerald-50 transition-colors flex items-center justify-between gap-3"
+                  >
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold">{wf.jpName}</p>
+                      <div className="flex items-center gap-3 text-xs text-muted-foreground mt-0.5">
+                        <span>精度 <strong className="text-emerald-600 tabular-nums">{wf.accuracy}%</strong></span>
+                        <span>·</span>
+                        <span>処理件数 <strong className="tabular-nums">{wf.totalCases}件</strong></span>
+                        <span>·</span>
+                        <span>現在: {trustModeLabels[wf.trustMode]}</span>
+                      </div>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+                  </button>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ) : (
+          <Card>
+            <CardContent className="py-8 text-center">
+              <p className="text-muted-foreground text-sm">現在、昇格候補の業務はありません</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                業務の精度が昇格閾値（95%）を超えると、ここに候補として表示されます
+              </p>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* 自動降格の安全装置 */}
+        <Card className="border-amber-200 bg-gradient-to-br from-amber-50/50 to-transparent">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-base flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4 text-amber-600" />
+              自動降格の安全装置
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-sm space-y-2">
+            <p>昇格後も、以下の場合は自動的に全ステップ承認モードに戻ります:</p>
+            <ul className="space-y-1 ml-4 text-xs">
+              <li className="flex items-start gap-2">
+                <span className="text-muted-foreground">・</span>
+                <span>精度が <strong className="text-amber-700">90%</strong> を下回った場合</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-muted-foreground">・</span>
+                <span>画面レイアウトの変更（UI 乖離）を検知した場合</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-muted-foreground">・</span>
+                <span>高リスク業務（高額送金など）は、どれだけ実績を積んでも完全自律化されません</span>
+              </li>
+            </ul>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
+  // 昇格承認後の画面
   if (upgradeApproved) {
     return (
       <div className="space-y-8 max-w-4xl">
@@ -29,7 +121,7 @@ export default function UpgradePage() {
           <CheckCircle2 className="h-12 w-12 text-emerald-500" />
           <p className="text-lg font-medium">昇格を承認しました</p>
           <p className="text-muted-foreground text-center">
-            {upgradeTarget.workflowName} を {modeLabels[upgradeTarget.nextMode]} モードに昇格しました。
+            {selectedWf.jpName} を {trustModeLabels[upgradeTarget.nextMode]} モードに昇格しました
           </p>
         </div>
 
@@ -41,11 +133,11 @@ export default function UpgradePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
               <div className="p-3 rounded-md bg-muted/50">
                 <p className="text-xs text-muted-foreground mb-1">変更前</p>
-                <p className="font-medium">{modeLabels[upgradeTarget.currentMode]}（{upgradeTarget.currentApprovals}回承認）</p>
+                <p className="font-medium">{trustModeLabels[upgradeTarget.currentMode]}（{upgradeTarget.currentApprovals} 回承認）</p>
               </div>
               <div className="p-3 rounded-md bg-emerald-50 border border-emerald-200">
                 <p className="text-xs text-muted-foreground mb-1">変更後</p>
-                <p className="font-medium text-emerald-700">{modeLabels[upgradeTarget.nextMode]}（{upgradeTarget.nextApprovals}回承認）</p>
+                <p className="font-medium text-emerald-700">{trustModeLabels[upgradeTarget.nextMode]}（{upgradeTarget.nextApprovals} 回承認）</p>
               </div>
             </div>
           </CardContent>
@@ -56,48 +148,48 @@ export default function UpgradePage() {
             <CardTitle className="text-base">次のステップ</CardTitle>
           </CardHeader>
           <CardContent className="text-sm text-muted-foreground space-y-2">
-            <p>チェックポイント承認モードでの稼働を開始しました。</p>
-            <p>正答率が90%を下回った場合、自動的に全ステップ承認モードに戻ります（自動降格）。</p>
+            <p>チェックポイント承認モードでの稼働を開始しました。次回以降のタスクから適用されます。</p>
+            <p>現在実行中のタスクには影響しません。</p>
+            <p>精度が 90% を下回った場合、自動的に全ステップ承認モードに戻ります（自動降格）。</p>
           </CardContent>
         </Card>
 
         <div className="flex flex-wrap gap-2 sm:gap-3">
-          <Button className="h-10 md:h-8" onClick={() => navigate('/home')}>ホームに戻る</Button>
-          <Button variant="outline" className="h-10 md:h-8" onClick={() => navigate('/learning')}>学習状況を確認</Button>
+          <Button variant="brand" size="cta" onClick={() => navigate('/home')}>ホームに戻る</Button>
+          <Button variant="outline" size="tap" onClick={() => navigate('/learning')}>学習状況を確認</Button>
         </div>
       </div>
     )
   }
 
+  // 昇格承認前の画面
   return (
-    <div className="space-y-8 max-w-4xl">
+    <div className="space-y-6 max-w-4xl">
+      <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
+        <button onClick={() => navigate('/upgrade')} className="hover:text-foreground">信頼レベル昇格</button>
+        <ChevronRight className="h-3 w-3" />
+        <span className="text-foreground font-medium">{selectedWf.jpName}</span>
+      </div>
+
       <div>
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-          <Button variant="ghost" size="sm" onClick={() => navigate('/learning')}>← 戻る</Button>
-          <h1 className="text-xl sm:text-2xl font-semibold tracking-tight">信頼レベル昇格の確認</h1>
-        </div>
-        <p className="text-muted-foreground mt-2">
-          AIの実績に基づいて、承認プロセスを効率化します。
+        <h1 className="text-2xl font-semibold tracking-normal leading-[1.4]">昇格の確認: {selectedWf.jpName}</h1>
+        <p className="text-muted-foreground mt-1">
+          AI の実績に基づいて、承認プロセスを効率化します
         </p>
       </div>
 
-      <div className="flex items-center gap-3">
-        <span className="text-sm text-muted-foreground">対象:</span>
-        <Badge variant="outline" className="text-sm">{upgradeTarget.workflowName}</Badge>
-      </div>
-
-      {/* 1. Qualification checklist */}
+      {/* 1. 昇格要件のクリア状況 */}
       <Card className="border-emerald-200 bg-emerald-50/30">
         <CardHeader className="pb-2">
           <CardTitle className="text-base">昇格要件のクリア状況</CardTitle>
-          <p className="text-xs text-muted-foreground">この昇格が提案されている客観的な根拠です。</p>
+          <p className="text-xs text-muted-foreground">この昇格が提案されている客観的な根拠</p>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
             {[
-              `連続正常処理: ${upgradeTarget.reason.cleanRuns}件（差し戻しゼロ）`,
-              `正答率: ${upgradeTarget.reason.accuracy}%（閾値 95% を超過）`,
-              `学習済み差し戻し: ${upgradeTarget.reason.sendBacksLearned}件（過去の指摘を学習済み）`,
+              `連続正常処理: ${upgradeTarget.reason.cleanRuns} 件（差し戻しゼロ）`,
+              `精度: ${upgradeTarget.reason.accuracy}%（閾値 95% を超過）`,
+              `学習済み差し戻し: ${upgradeTarget.reason.sendBacksLearned} 件（過去の指摘を学習済）`,
             ].map((text, i) => (
               <div key={i} className="flex items-center gap-2">
                 <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
@@ -108,8 +200,47 @@ export default function UpgradePage() {
         </CardContent>
       </Card>
 
-      {/* 2. Explanation */}
-      <Alert className="border-blue-200 bg-blue-50/50 [&>svg]:text-blue-500">
+      {/* 2. 自動降格ルールゲージ */}
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base">自動降格ルール</CardTitle>
+          <p className="text-xs text-muted-foreground">精度が閾値を下回ると、自動的に全ステップ承認に戻ります</p>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-amber-600 font-medium tabular-nums">降格閾値: {upgradeTarget.demotionThreshold}%</span>
+              <span className="text-emerald-600 font-medium tabular-nums">現在: {upgradeTarget.currentAccuracy}%</span>
+            </div>
+            <div className="relative h-3 rounded-full bg-muted overflow-hidden">
+              <div
+                className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-rose-400 via-amber-400 to-emerald-500"
+                style={{ width: '100%' }}
+              />
+              <div
+                className="absolute inset-y-0 w-0.5 bg-amber-600"
+                style={{ left: `${upgradeTarget.demotionThreshold}%` }}
+                title="降格閾値"
+              />
+              <div
+                className="absolute -top-1 w-2 h-5 bg-primary rounded-full border-2 border-white shadow"
+                style={{ left: `calc(${upgradeTarget.currentAccuracy}% - 4px)` }}
+                title="現在の精度"
+              />
+            </div>
+            <div className="flex justify-between text-[10px] text-muted-foreground">
+              <span>80%</span>
+              <span>90%</span>
+              <span>100%</span>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground mt-3">
+            降格閾値まで <strong className="text-emerald-600 tabular-nums">+{(upgradeTarget.currentAccuracy - upgradeTarget.demotionThreshold).toFixed(1)}%</strong> の余裕があります
+          </p>
+        </CardContent>
+      </Card>
+
+      <Alert variant="info">
         <Info className="h-4 w-4" />
         <AlertDescription className="text-sm">
           <strong>信頼レベル昇格とは:</strong> 十分な実績を積んだ業務について、人間の承認ステップを削減し処理効率を向上させます。
@@ -128,7 +259,7 @@ export default function UpgradePage() {
 
       {/* 4. What stays human + what goes AI */}
       <UpgradeDetail
-        workflowName={upgradeTarget.workflowName}
+        workflowName={selectedWf.jpName}
         reason={upgradeTarget.reason}
         safety={upgradeTarget.safety}
         keepHuman={keepHuman}
@@ -138,13 +269,13 @@ export default function UpgradePage() {
       {/* 5. Impact summary */}
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-base">インパクトサマリー</CardTitle>
+          <CardTitle className="text-base">期待される効果</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
             {[
               { label: '承認回数', before: `${upgradeTarget.currentApprovals}回`, after: `${upgradeTarget.nextApprovals}回`, change: `${Math.round((1 - upgradeTarget.nextApprovals / upgradeTarget.currentApprovals) * 100)}%削減` },
-              { label: '推定処理時間', before: '約15分', after: '約6分', change: '60%短縮' },
+              { label: '担当者の関与時間', before: '約15分', after: '約6分', change: '60%短縮' },
               { label: '高リスクステップ', before: '人間承認', after: '人間承認を維持', change: '変更なし' },
             ].map(item => (
               <div key={item.label} className="text-center p-3 rounded-md bg-muted/50">
@@ -162,17 +293,17 @@ export default function UpgradePage() {
       </Card>
 
       {/* 6. Risk warning */}
-      <Alert variant="destructive" className="border-amber-400 bg-amber-50 text-amber-900 [&>svg]:text-amber-600">
+      <Alert variant="warning">
         <AlertTriangle className="h-4 w-4" />
         <AlertDescription className="text-sm">
-          <strong>注意:</strong> チェックポイント承認モードでは、AI自動実行ステップ（{autoRun.join('、')}）の途中で人間が介入することはできません。
-          正答率が90%を下回った場合、自動的に全ステップ承認モードに戻ります。
+          <strong>注意:</strong> チェックポイント承認モードでは、AI 自動実行ステップ（{autoRun.join('、')}）の途中で人間が介入することはできません。
+          精度が 90% を下回った場合、自動的に全ステップ承認モードに戻ります。
         </AlertDescription>
       </Alert>
 
       <div className="flex flex-wrap gap-2 sm:gap-3 pt-2">
-        <Button className="h-10 md:h-8" onClick={approveUpgrade}>昇格を承認</Button>
-        <Button variant="outline" className="h-10 md:h-8" onClick={() => navigate('/learning')}>キャンセル</Button>
+        <Button variant="brand" size="cta" onClick={approveUpgrade}>昇格を承認</Button>
+        <Button variant="outline" size="tap" onClick={() => navigate('/upgrade')}>キャンセル</Button>
       </div>
     </div>
   )

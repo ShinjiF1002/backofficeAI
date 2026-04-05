@@ -10,6 +10,9 @@ import UpgradePage from '@/pages/UpgradePage'
 import OverviewPage from '@/pages/OverviewPage'
 import HowItWorksPage from '@/pages/HowItWorksPage'
 import RepositoryPage from '@/pages/RepositoryPage'
+import RunHistoryPage from '@/pages/RunHistoryPage'
+import GuardrailsPage from '@/pages/GuardrailsPage'
+import AgentsPage from '@/pages/AgentsPage'
 
 export default function App() {
   return (
@@ -26,6 +29,9 @@ export default function App() {
             <Route path="/proposals" element={<ProposalReviewPage />} />
             <Route path="/learning" element={<LearningStatusPage />} />
             <Route path="/upgrade" element={<UpgradePage />} />
+            <Route path="/runs" element={<RunHistoryPage />} />
+            <Route path="/guardrails" element={<GuardrailsPage />} />
+            <Route path="/agents" element={<AgentsPage />} />
           </Route>
         </Routes>
       </AppProvider>

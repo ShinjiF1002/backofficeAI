@@ -1,284 +1,198 @@
+import { useNavigate } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { FolderOpen, FileText, Shield, Lightbulb, GitPullRequest, Bot, ClipboardList, BarChart3, Search, BookOpen } from 'lucide-react'
-
-interface FolderItemProps {
-  icon: typeof FolderOpen
-  name: string
-  tier?: '1' | '2'
-  desc: string
-  children?: { name: string; desc: string }[]
-  color?: string
-}
-
-function FolderItem({ icon: Icon, name, tier, desc, children, color = 'text-muted-foreground' }: FolderItemProps) {
-  return (
-    <div className="space-y-1">
-      <div className="flex items-start gap-2">
-        <Icon className={`h-4 w-4 shrink-0 mt-0.5 ${color}`} />
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
-            <span className="text-sm font-mono font-semibold">{name}/</span>
-            {tier && (
-              <Badge variant={tier === '2' ? 'default' : 'secondary'} className="text-[10px] px-1.5 py-0">
-                Tier {tier}
-              </Badge>
-            )}
-          </div>
-          <p className="text-xs text-muted-foreground">{desc}</p>
-        </div>
-      </div>
-      {children && (
-        <div className="ml-6 border-l border-border pl-3 space-y-1.5">
-          {children.map(child => (
-            <div key={child.name}>
-              <span className="text-xs font-mono text-muted-foreground">{child.name}</span>
-              <span className="text-xs text-muted-foreground"> — {child.desc}</span>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
+import { Button } from '@/components/ui/button'
+import { runHistory, proposals, guardrails } from '@/data/mockData'
+import {
+  ShieldCheck, Camera, FileCheck, History, GitBranch, Lock,
+  ArrowRight, Database, Server,
+} from 'lucide-react'
 
 export default function RepositoryPage() {
+  const navigate = useNavigate()
+
+  const runsTotal = runHistory.length
+  const runsWithScreenshot = runHistory.filter(r => r.hasScreenshots).length
+  const proposalsOpen = proposals.filter(p => p.status === 'open').length
+  const proposalsApproved = proposals.filter(p => p.status === 'approved').length
+  const proposalsRejected = proposals.filter(p => p.status === 'rejected').length
+
   return (
-    <div className="space-y-8 max-w-4xl">
+    <div className="space-y-6 max-w-4xl">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">リポジトリ構成</h1>
-        <p className="text-muted-foreground mt-1">システムを構成するデータとファイルの全体像</p>
+        <h1 className="text-2xl font-semibold tracking-normal leading-[1.4]">データガバナンス</h1>
+        <p className="text-muted-foreground mt-1">
+          監査対応とデータ管理の仕組み。すべての操作・承認・変更を完全に記録しています。
+        </p>
       </div>
 
-      {/* Overview Diagram */}
+      {/* データ所在の明示 */}
+      <Card className="border-primary/30 bg-primary/5">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <Lock className="h-4 w-4 text-primary" />
+            データの所在
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="flex gap-3">
+              <Server className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium">自社クラウドテナント内で完結</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  AI 基盤（Claude）を自社テナント上にホスト。業務データは社外に出ません。
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <Database className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+              <div>
+                <p className="text-sm font-medium">既存アクセス権限で動作</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  担当者の PC 上で既にアクセス権のあるアプリを操作。新たなシステム連携は不要です。
+                </p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 監査証跡の4点セット */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg">全体構成図</CardTitle>
+          <CardTitle className="text-base flex items-center gap-2">
+            <ShieldCheck className="h-4 w-4 text-primary" />
+            完全な操作証跡
+          </CardTitle>
+          <p className="text-xs text-muted-foreground">すべての AI 実行は 4 点セットで完全に追跡可能です</p>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { icon: Camera, label: '画面キャプチャ', desc: 'AI が操作した全画面を保存', count: `${runsWithScreenshot}件` },
+              { icon: History, label: '実行ログ', desc: 'ステップごとの詳細ログ', count: `${runsTotal}件` },
+              { icon: FileCheck, label: '承認記録', desc: '誰がいつ承認したかを記録', count: `${runsTotal}件` },
+              { icon: GitBranch, label: '変更履歴', desc: 'すべての変更を Git で管理', count: '全履歴' },
+            ].map(item => (
+              <div key={item.label} className="p-3 rounded-lg border border-border/60 bg-card shadow-[var(--shadow-premium-sm)]">
+                <item.icon className="h-5 w-5 text-primary mb-2" />
+                <p className="text-sm font-medium leading-[1.4]">{item.label}</p>
+                <p className="text-[11px] text-muted-foreground mt-0.5 mb-1.5 leading-[1.4]">{item.desc}</p>
+                <p className="text-xs font-num text-primary tabular-nums font-semibold">{item.count}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-4 pt-4 border-t">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => navigate('/runs')}
+            >
+              実行履歴を見る <ArrowRight className="h-3.5 w-3.5" />
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* 変更管理の透明性 */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center gap-2">
+            <GitBranch className="h-4 w-4 text-primary" />
+            変更管理の透明性
+          </CardTitle>
           <p className="text-xs text-muted-foreground">
-            すべてのデータはGitリポジトリで管理。変更履歴が完全に追跡可能です。
+            手順変更・チェックルール変更は、すべて提案として記録されます
           </p>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-
-            {/* manuals */}
-            <FolderItem
-              icon={BookOpen}
-              name="manuals"
-              desc="原本（ユーザ提供の業務マニュアル）"
-              color="text-blue-500"
-              children={[
-                { name: 'raw/', desc: 'アップロードされたままのマニュアル' },
-                { name: 'parsed/', desc: 'AIが構造化・分割したもの' },
-              ]}
-            />
-
-            {/* procedures */}
-            <FolderItem
-              icon={ClipboardList}
-              name="procedures"
-              tier="2"
-              desc="実行可能な手順定義"
-              color="text-violet-500"
-              children={[
-                { name: '{domain}/{procedure}.md', desc: '人間可読な手順書' },
-                { name: '{domain}/{procedure}.schema.yaml', desc: '機械可読な手順定義' },
-                { name: '_index.md', desc: '自動生成される目次・依存グラフ' },
-              ]}
-            />
-
-            {/* guardrails */}
-            <FolderItem
-              icon={Shield}
-              name="guardrails"
-              tier="2"
-              desc="バリデーションルール（ガードレール）"
-              color="text-red-500"
-              children={[
-                { name: '{domain}/{rule}.yaml', desc: 'ルール定義（severity: error/warning）' },
-                { name: '_index.md', desc: 'ガードレール一覧・対応手順' },
-              ]}
-            />
-
-            {/* knowledge */}
-            <FolderItem
-              icon={Lightbulb}
-              name="knowledge"
-              tier="1"
-              desc="リアルタイム反映ナレッジ"
-              color="text-teal-500"
-              children={[
-                { name: 'corrections/', desc: 'ユーザ修正コメント（raw）' },
-                { name: 'staging/', desc: '未検証ナレッジ（即時参照可、低重み）' },
-                { name: 'compiled/', desc: '検証済みナレッジ（正式知見）' },
-                { name: 'edge_cases/', desc: '発見されたエッジケース集' },
-                { name: 'error_taxonomy.md', desc: 'エラー分類体系' },
-              ]}
-            />
-
-            {/* proposals */}
-            <FolderItem
-              icon={GitPullRequest}
-              name="proposals"
-              desc="手順・ガードレールの変更提案キュー"
-              color="text-amber-500"
-              children={[
-                { name: 'pending/', desc: 'レビュー待ちの提案' },
-                { name: 'approved/', desc: '承認済みの提案' },
-                { name: 'rejected/', desc: '却下された提案' },
-              ]}
-            />
-
-            {/* agents */}
-            <FolderItem
-              icon={Bot}
-              name="agents"
-              desc="エージェント定義"
-              color="text-indigo-500"
-              children={[
-                { name: 'configs/', desc: '担当手順、信頼レベル、ツール権限' },
-                { name: 'prompts/', desc: 'システムプロンプトテンプレート' },
-                { name: 'tools/', desc: 'カスタムツール定義' },
-              ]}
-            />
-
-            {/* runs */}
-            <FolderItem
-              icon={FileText}
-              name="runs"
-              desc="実行記録（全件保存、保持期間制限なし）"
-              color="text-emerald-500"
-              children={[
-                { name: 'plan.md', desc: '実行前の計画' },
-                { name: 'execution_log.md', desc: 'ステップごとの実行ログ' },
-                { name: 'screenshots/', desc: '画面キャプチャ' },
-                { name: 'approval.yaml', desc: '承認記録（who, when, decision）' },
-                { name: 'feedback.md', desc: 'ユーザの修正コメント' },
-              ]}
-            />
-
-            {/* evaluation */}
-            <FolderItem
-              icon={BarChart3}
-              name="evaluation"
-              desc="品質追跡"
-              color="text-pink-500"
-              children={[
-                { name: 'metrics/', desc: '手順別の精度・介入率・処理時間' },
-                { name: 'reports/', desc: '定期レポート' },
-                { name: 'regression/', desc: '承認済みrunから自動生成されたテストケース' },
-              ]}
-            />
-
-            {/* lint */}
-            <FolderItem
-              icon={Search}
-              name="lint"
-              desc="ナレッジベース健全性チェック"
-              color="text-orange-500"
-              children={[
-                { name: 'rules/', desc: 'lintルール定義' },
-                { name: 'reports/', desc: 'lint結果' },
-              ]}
-            />
+          <div className="grid grid-cols-3 gap-3">
+            <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-center">
+              <p className="text-2xl font-bold text-amber-700 tabular-nums">{proposalsOpen}</p>
+              <p className="text-xs text-muted-foreground mt-1">レビュー待ち</p>
+            </div>
+            <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-center">
+              <p className="text-2xl font-bold text-emerald-700 tabular-nums">{proposalsApproved}</p>
+              <p className="text-xs text-muted-foreground mt-1">承認済</p>
+            </div>
+            <div className="p-3 rounded-lg bg-muted border text-center">
+              <p className="text-2xl font-bold text-muted-foreground tabular-nums">{proposalsRejected}</p>
+              <p className="text-xs text-muted-foreground mt-1">却下</p>
+            </div>
+          </div>
+          <p className="text-xs text-muted-foreground mt-3 leading-relaxed">
+            どの変更が、いつ、誰のコメントを根拠に、どのレビュアーによって承認/却下されたかがすべて記録されます。
+            AI が自律的にルールを変更することはありません。
+          </p>
+          <div className="mt-4">
+            <Button variant="outline" size="sm" onClick={() => navigate('/proposals')}>
+              変更提案を見る <ArrowRight className="h-3.5 w-3.5" />
+            </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* Tier Explanation */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-        <Card className="border-teal-200 bg-teal-50/30">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Badge variant="secondary">Tier 1</Badge>
-              リアルタイム反映
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-xs text-muted-foreground space-y-1">
-            <p><strong>対象:</strong> knowledge/</p>
-            <p><strong>反映:</strong> 修正コメント → 即座にAIが参照可能</p>
-            <p><strong>人間レビュー:</strong> 不要（矛盾検出時のみフラグ）</p>
-            <p><strong>役割:</strong> AIへの文脈情報。手順そのものは変えない。</p>
-          </CardContent>
-        </Card>
-
-        <Card className="border-slate-300 bg-slate-50">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-base flex items-center gap-2">
-              <Badge>Tier 2</Badge>
-              人間レビュー必須
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="text-xs text-muted-foreground space-y-1">
-            <p><strong>対象:</strong> procedures/ + guardrails/</p>
-            <p><strong>反映:</strong> 提案 → 人間レビュー → 承認後に反映</p>
-            <p><strong>人間レビュー:</strong> 必須（例外なし）</p>
-            <p><strong>役割:</strong> 実行手順とバリデーションルール。逸脱不可。</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Data Flow */}
+      {/* ガードレール */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg">データの流れ</CardTitle>
+          <CardTitle className="text-base flex items-center gap-2">
+            <ShieldCheck className="h-4 w-4 text-primary" />
+            現在適用中のチェックルール
+          </CardTitle>
+          <p className="text-xs text-muted-foreground">
+            {guardrails.length} 件のガードレールが、AI の判断を自動チェックしています
+          </p>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center gap-2 flex-wrap text-xs">
-            {[
-              { label: 'manuals/', color: 'bg-blue-100 text-blue-700 border-blue-200' },
-              { label: '→', color: '' },
-              { label: 'procedures/', color: 'bg-violet-100 text-violet-700 border-violet-200' },
-              { label: '+', color: '' },
-              { label: 'guardrails/', color: 'bg-red-100 text-red-700 border-red-200' },
-              { label: '+', color: '' },
-              { label: 'knowledge/', color: 'bg-teal-100 text-teal-700 border-teal-200' },
-              { label: '→', color: '' },
-              { label: 'エージェント実行', color: 'bg-indigo-100 text-indigo-700 border-indigo-200' },
-              { label: '→', color: '' },
-              { label: 'runs/', color: 'bg-emerald-100 text-emerald-700 border-emerald-200' },
-              { label: '→', color: '' },
-              { label: 'evaluation/', color: 'bg-pink-100 text-pink-700 border-pink-200' },
-            ].map((item, i) =>
-              item.color ? (
-                <span key={i} className={`px-2 py-1 rounded border font-medium ${item.color}`}>{item.label}</span>
-              ) : (
-                <span key={i} className="text-muted-foreground">{item.label}</span>
-              )
-            )}
+          <div className="space-y-2">
+            {guardrails.slice(0, 3).map(g => (
+              <div key={g.id} className="flex items-center justify-between py-2 px-3 rounded-md bg-muted/30 border">
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                  <Badge
+                    variant="outline"
+                    className={`text-[10px] shrink-0 ${g.severity === 'error' ? 'border-rose-200 text-rose-700 bg-rose-50' : 'border-amber-200 text-amber-700 bg-amber-50'}`}
+                  >
+                    {g.severity === 'error' ? 'ブロック' : '警告'}
+                  </Badge>
+                  <span className="text-sm truncate">{g.jpName}</span>
+                </div>
+                <span className="text-xs text-muted-foreground tabular-nums shrink-0">
+                  直近 {g.firedCount}回
+                </span>
+              </div>
+            ))}
           </div>
-          <div className="mt-3 flex items-center gap-2 flex-wrap text-xs">
-            <span className="text-muted-foreground">フィードバックループ:</span>
-            <span className="px-2 py-1 rounded border bg-emerald-100 text-emerald-700 border-emerald-200 font-medium">runs/feedback</span>
-            <span className="text-muted-foreground">→</span>
-            <span className="px-2 py-1 rounded border bg-teal-100 text-teal-700 border-teal-200 font-medium">knowledge/</span>
-            <span className="text-muted-foreground">→</span>
-            <span className="px-2 py-1 rounded border bg-amber-100 text-amber-700 border-amber-200 font-medium">proposals/</span>
-            <span className="text-muted-foreground">→ 人間承認 →</span>
-            <span className="px-2 py-1 rounded border bg-violet-100 text-violet-700 border-violet-200 font-medium">procedures/</span>
+          <div className="mt-3">
+            <Button variant="outline" size="sm" onClick={() => navigate('/guardrails')}>
+              全チェックルールを見る <ArrowRight className="h-3.5 w-3.5" />
+            </Button>
           </div>
         </CardContent>
       </Card>
 
-      {/* Agent Execution Context */}
+      {/* 監査シナリオ */}
       <Card>
         <CardHeader className="pb-3">
-          <CardTitle className="text-lg">エージェント実行時の情報合成</CardTitle>
-          <p className="text-xs text-muted-foreground">エージェントは以下の優先順位で情報を使用します</p>
+          <CardTitle className="text-base">監査シナリオ（例）</CardTitle>
+          <p className="text-xs text-muted-foreground">「ある 1 件の業務処理」を完全に追跡できます</p>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
             {[
-              { priority: '1', label: 'procedure.schema.yaml', desc: '実行手順（最優先、逸脱不可）', color: 'bg-violet-50 border-violet-200' },
-              { priority: '2', label: 'guardrails/*.yaml', desc: '各ステップのバリデーション（違反時はブロックまたは警告）', color: 'bg-red-50 border-red-200' },
-              { priority: '3', label: 'knowledge/compiled/', desc: '文脈情報（参考情報として使用、直接の行動変更はしない）', color: 'bg-teal-50 border-teal-200' },
-              { priority: '4', label: 'knowledge/staging/', desc: '未検証情報（最低重み、注意喚起のみ）', color: 'bg-slate-50 border-slate-200' },
+              { step: '1', text: 'いつ実行されたか', detail: '開始時刻・完了時刻が記録されています' },
+              { step: '2', text: 'AI が何を判断したか', detail: '各ステップでの AI の判断内容と根拠が残っています' },
+              { step: '3', text: 'どの画面を操作したか', detail: '全画面のスクリーンショットが保存されています' },
+              { step: '4', text: '誰が承認したか', detail: '各ステップの承認者と承認時刻が記録されています' },
+              { step: '5', text: '修正があったか', detail: '担当者の修正コメントとその反映状況が追跡可能です' },
             ].map(item => (
-              <div key={item.priority} className={`flex items-start gap-3 p-3 rounded-lg border ${item.color}`}>
-                <span className="text-xs font-bold bg-primary text-primary-foreground rounded-full w-5 h-5 flex items-center justify-center shrink-0">{item.priority}</span>
-                <div>
-                  <span className="text-sm font-mono font-medium">{item.label}</span>
-                  <p className="text-xs text-muted-foreground mt-0.5">{item.desc}</p>
+              <div key={item.step} className="flex items-start gap-3 py-2 border-b border-border last:border-0">
+                <span className="text-xs font-bold bg-primary text-primary-foreground rounded-full w-5 h-5 flex items-center justify-center shrink-0">
+                  {item.step}
+                </span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium">{item.text}</p>
+                  <p className="text-xs text-muted-foreground">{item.detail}</p>
                 </div>
               </div>
             ))}
