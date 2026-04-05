@@ -16,9 +16,9 @@ interface ModeComparisonProps {
 }
 
 const modeLabels: Record<string, string> = {
-  'full-step': '全ステップ承認',
+  'supervised': '全ステップ承認',
   'checkpoint': 'チェックポイント承認',
-  'post-check': '事後確認',
+  'autonomous': '事後確認',
 }
 
 function StepRow({ label, steps, accessor }: { label: string; steps: StepDef[]; accessor: 'current' | 'next' }) {

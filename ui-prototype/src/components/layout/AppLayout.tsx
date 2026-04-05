@@ -9,7 +9,7 @@ export default function AppLayout() {
   const closeDrawer = useCallback(() => setDrawerOpen(false), [])
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex min-h-screen bg-canvas">
       {/* Desktop sidebar: inline from md up */}
       <div className="hidden md:block">
         <Sidebar />
@@ -17,13 +17,13 @@ export default function AppLayout() {
 
       {/* Mobile drawer sidebar: fixed overlay below md */}
       <div
-        className={`md:hidden fixed inset-0 z-40 transition-opacity ${
+        className={`md:hidden fixed inset-0 z-50 transition-opacity ${
           drawerOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
         }`}
         aria-hidden={!drawerOpen}
       >
         <div
-          className="absolute inset-0 bg-black/40"
+          className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
           onClick={closeDrawer}
         />
         <div
@@ -31,14 +31,16 @@ export default function AppLayout() {
             drawerOpen ? 'translate-x-0' : '-translate-x-full'
           }`}
         >
-          <Sidebar onNavigate={closeDrawer} />
+          <Sidebar variant="drawer" onNavigate={closeDrawer} />
         </div>
       </div>
 
       <div className="flex-1 flex flex-col min-w-0">
         <TopBar onMenuClick={openDrawer} />
-        <main className="flex-1 p-4 md:p-6 overflow-auto">
-          <Outlet />
+        <main className="flex-1 overflow-auto">
+          <div className="max-w-[1280px] mx-auto px-4 py-5 md:px-8 md:py-6">
+            <Outlet />
+          </div>
         </main>
       </div>
     </div>
