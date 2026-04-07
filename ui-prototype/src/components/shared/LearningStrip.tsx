@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom'
 import type { LearningMetric } from '@/data/types'
 import { Sparkles, ArrowRight } from 'lucide-react'
-import { Num } from './Num'
+import { Num } from 'crystalline-ui'
 
 interface LearningStripProps {
   metrics: LearningMetric[]

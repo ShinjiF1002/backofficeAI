@@ -1,15 +1,14 @@
-import { useNavigate } from 'react-router-dom'
-import type { RepeatIssue } from '@/data/types'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
-import { Button } from '@/components/ui/button'
-import { AlertTriangle } from 'lucide-react'
+import { useNavigate } from "react-router-dom";
+import type { RepeatIssue } from "@/data/types";
+import { Alert, AlertDescription, AlertTitle, Button } from "crystalline-ui";
+import { AlertTriangle } from "lucide-react";
 
 interface WarningBannerProps {
-  issue: RepeatIssue
+  issue: RepeatIssue;
 }
 
 export default function WarningBanner({ issue }: WarningBannerProps) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <Alert variant="warning">
@@ -19,12 +18,15 @@ export default function WarningBanner({ issue }: WarningBannerProps) {
       </AlertTitle>
       <AlertDescription>
         <p className="mb-2">
-          直近 {issue.total} 件中 {issue.count} 件が「{issue.description}」で差し戻し
+          直近 {issue.total} 件中 {issue.count} 件が「{issue.description}
+          」で差し戻し
         </p>
         <div className="space-y-1 text-sm">
           {issue.entries.map((entry, i) => (
             <div key={i} className="flex gap-2">
-              <span className="text-foreground font-medium font-mono text-xs">{entry.date}</span>
+              <span className="text-foreground font-medium font-mono text-xs">
+                {entry.date}
+              </span>
               <span className="text-foreground text-xs">{entry.author}:</span>
               <span className="text-muted-foreground">{entry.text}</span>
             </div>
@@ -36,13 +38,13 @@ export default function WarningBanner({ issue }: WarningBannerProps) {
           </p>
           <Button
             size="sm"
-            variant="outline"
-            onClick={() => navigate('/proposals')}
+            variant="secondary"
+            onClick={() => navigate("/proposals")}
           >
             変更提案を確認する →
           </Button>
         </div>
       </AlertDescription>
     </Alert>
-  )
+  );
 }

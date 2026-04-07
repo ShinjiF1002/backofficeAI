@@ -1,5 +1,5 @@
-import { Textarea } from '@/components/ui/textarea'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Textarea } from 'crystalline-ui'
+import { Card, CardContent, CardHeader, CardTitle } from 'crystalline-ui'
 
 interface CommentFormProps {
   value: string

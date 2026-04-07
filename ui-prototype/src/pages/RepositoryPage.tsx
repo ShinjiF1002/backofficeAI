@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { StatusPill, type StatusPillTone } from '@/components/ui/status-pill'
-import PageHeader from '@/components/shared/PageHeader'
-import { Num } from '@/components/shared/Num'
+import {
+  Card, CardContent, CardHeader, CardTitle,
+  Button, StatusPill, type StatusTone,
+  Heading, Text, Num, FadeIn,
+} from 'crystalline-ui'
 import { runHistory, proposals, guardrails } from '@/data/mockData'
 import { guardrailSeverityLabels, type GuardrailSeverity } from '@/data/types'
 import {
@@ -17,9 +17,9 @@ const tintClasses = {
   slate:   'border-slate-200/60 bg-slate-50/40',
 } as const
 
-const severityTone: Record<GuardrailSeverity, StatusPillTone> = {
-  error: 'rose',
-  warning: 'amber',
+const severityTone: Record<GuardrailSeverity, StatusTone> = {
+  error: 'danger',
+  warning: 'warning',
 }
 
 export default function RepositoryPage() {
@@ -33,12 +33,13 @@ export default function RepositoryPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="データガバナンス"
-        subtitle="監査対応とデータ管理の仕組み。すべての操作・承認・変更を完全に記録しています。"
-      />
+      <FadeIn>
+        <Heading as="h1">データガバナンス</Heading>
+        <Text muted>監査対応とデータ管理の仕組み。すべての操作・承認・変更を完全に記録しています。</Text>
+      </FadeIn>
 
       {/* データ所在の明示 */}
+      <FadeIn index={1}>
       <Card variant="tinted">
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2 leading-[1.4]">
@@ -69,8 +70,10 @@ export default function RepositoryPage() {
           </div>
         </CardContent>
       </Card>
+      </FadeIn>
 
       {/* 監査証跡の4点セット */}
+      <FadeIn index={2}>
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2 leading-[1.4]">
@@ -99,7 +102,7 @@ export default function RepositoryPage() {
           </div>
           <div className="mt-4 pt-4 border-t">
             <Button
-              variant="outline"
+              variant="secondary"
               size="sm"
               onClick={() => navigate('/runs')}
             >
@@ -108,8 +111,10 @@ export default function RepositoryPage() {
           </div>
         </CardContent>
       </Card>
+      </FadeIn>
 
       {/* 変更管理の透明性 */}
+      <FadeIn index={3}>
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2 leading-[1.4]">
@@ -146,14 +151,16 @@ export default function RepositoryPage() {
             AI が自律的にルールを変更することはありません。
           </p>
           <div className="mt-4">
-            <Button variant="outline" size="sm" onClick={() => navigate('/proposals')}>
+            <Button variant="secondary" size="sm" onClick={() => navigate('/proposals')}>
               変更提案を見る <ArrowRight className="h-3.5 w-3.5" />
             </Button>
           </div>
         </CardContent>
       </Card>
+      </FadeIn>
 
       {/* ガードレール */}
+      <FadeIn index={4}>
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base flex items-center gap-2 leading-[1.4]">
@@ -181,14 +188,16 @@ export default function RepositoryPage() {
             ))}
           </div>
           <div className="mt-3">
-            <Button variant="outline" size="sm" onClick={() => navigate('/guardrails')}>
+            <Button variant="secondary" size="sm" onClick={() => navigate('/guardrails')}>
               全チェックルールを見る <ArrowRight className="h-3.5 w-3.5" />
             </Button>
           </div>
         </CardContent>
       </Card>
+      </FadeIn>
 
       {/* 監査シナリオ */}
+      <FadeIn index={5}>
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base leading-[1.4]">監査シナリオ（例）</CardTitle>
@@ -216,6 +225,7 @@ export default function RepositoryPage() {
           </div>
         </CardContent>
       </Card>
+      </FadeIn>
     </div>
   )
 }

@@ -1,11 +1,11 @@
 import { useNavigate } from 'react-router-dom'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import {
+  Card, CardContent, CardHeader, CardTitle,
+  Badge, Button, StatusPill,
+  Heading, Text, FadeIn,
+} from 'crystalline-ui'
 import FlywheelDiagram from '@/components/shared/FlywheelDiagram'
 import POCPhaseBadge from '@/components/shared/POCPhaseBadge'
-import PageHeader from '@/components/shared/PageHeader'
-import { StatusPill } from '@/components/ui/status-pill'
 import { learningMetrics, pocPhases } from '@/data/mockData'
 import {
   ArrowRight, Lightbulb, ShieldCheck, Shield, ArrowRightCircle,
@@ -37,12 +37,13 @@ export default function HowItWorksPage() {
 
   return (
     <div className="space-y-6 max-w-4xl">
-      <PageHeader
-        title="仕組み"
-        subtitle="AI が業務を代行し、担当者の気づきから継続的に学習する仕組み"
-      />
+      <FadeIn>
+        <Heading as="h1">仕組み</Heading>
+        <Text muted>AI が業務を代行し、担当者の気づきから継続的に学習する仕組み</Text>
+      </FadeIn>
 
       {/* 学習フライホイール — Overview と同じビジュアル */}
+      <FadeIn index={1}>
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">継続的に賢くなる仕組み</CardTitle>
@@ -59,14 +60,16 @@ export default function HowItWorksPage() {
             variant="detailed"
           />
           <div className="mt-4 flex justify-center">
-            <Button size="sm" variant="outline" onClick={() => navigate('/home')}>
+            <Button size="sm" variant="secondary" onClick={() => navigate('/home')}>
               実際のオペレータ画面を見る <ArrowRight className="h-3.5 w-3.5" />
             </Button>
           </div>
         </CardContent>
       </Card>
+      </FadeIn>
 
       {/* 2層のデータモデル */}
+      <FadeIn index={2}>
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">2 層のデータモデル</CardTitle>
@@ -97,7 +100,7 @@ export default function HowItWorksPage() {
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               <Shield className="h-5 w-5 text-slate-700" />
               <span className="font-semibold text-sm leading-[1.4]">Tier 2: 手順定義 + チェックルール（ガードレール）</span>
-              <StatusPill tone="amber">人間レビュー必須</StatusPill>
+              <StatusPill tone="warning">人間レビュー必須</StatusPill>
             </div>
             <ul className="text-xs text-muted-foreground space-y-1 ml-7 leading-[1.5]">
               <li>・実行手順とバリデーションルール</li>
@@ -110,8 +113,10 @@ export default function HowItWorksPage() {
           </div>
         </CardContent>
       </Card>
+      </FadeIn>
 
       {/* 信頼レベル 3段階 */}
+      <FadeIn index={3}>
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">段階的な自律化 — 信頼レベル</CardTitle>
@@ -176,8 +181,10 @@ export default function HowItWorksPage() {
           </div>
         </CardContent>
       </Card>
+      </FadeIn>
 
       {/* POC実施計画（現在フェーズマーカー付き） */}
+      <FadeIn index={4}>
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-lg">POC 実施計画</CardTitle>
@@ -194,6 +201,7 @@ export default function HowItWorksPage() {
           <p className="text-xs text-muted-foreground text-center mt-1">POC で計測する指標</p>
         </CardContent>
       </Card>
+      </FadeIn>
     </div>
   )
 }

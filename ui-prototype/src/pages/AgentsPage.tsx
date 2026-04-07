@@ -1,17 +1,17 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { StatusPill, type StatusPillTone } from '@/components/ui/status-pill'
-import PageHeader from '@/components/shared/PageHeader'
-import { Num } from '@/components/shared/Num'
+import {
+  Card, CardContent, CardHeader, CardTitle,
+  Badge, StatusPill, type StatusTone,
+  Heading, Text, Num, FadeIn,
+} from 'crystalline-ui'
 import { agents } from '@/data/mockData'
 import { Bot, Activity } from 'lucide-react'
 import type { ReactNode } from 'react'
 
-const statusMeta: Record<string, { label: string; tone: StatusPillTone; pulse: boolean }> = {
-  running:    { label: '稼働中',              tone: 'emerald', pulse: true },
-  idle:       { label: '待機中',              tone: 'slate',   pulse: false },
-  escalated:  { label: 'エスカレーション中', tone: 'amber',   pulse: true },
-  disabled:   { label: '停止中',              tone: 'rose',    pulse: false },
+const statusMeta: Record<string, { label: string; tone: StatusTone }> = {
+  running:    { label: '稼働中',              tone: 'success' },
+  idle:       { label: '待機中',              tone: 'neutral' },
+  escalated:  { label: 'エスカレーション中', tone: 'warning' },
+  disabled:   { label: '停止中',              tone: 'danger' },
 }
 
 function Metric({ label, children }: { label: string; children: ReactNode }) {
@@ -26,11 +26,12 @@ function Metric({ label, children }: { label: string; children: ReactNode }) {
 export default function AgentsPage() {
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="AI エージェント"
-        subtitle="業務ごとに専用の AI エージェントが稼働しています"
-      />
+      <FadeIn>
+        <Heading as="h1">AI エージェント</Heading>
+        <Text muted>業務ごとに専用の AI エージェントが稼働しています</Text>
+      </FadeIn>
 
+      <FadeIn index={1}>
       <div className="space-y-3">
         {agents.map(agent => {
           const status = statusMeta[agent.currentStatus]
@@ -47,7 +48,7 @@ export default function AgentsPage() {
                       <p className="text-xs text-muted-foreground mt-0.5 leading-[1.5]">{agent.description}</p>
                     </div>
                   </div>
-                  <StatusPill tone={status.tone} pulse={status.pulse}>
+                  <StatusPill tone={status.tone}>
                     {status.label}
                   </StatusPill>
                 </div>
@@ -94,6 +95,7 @@ export default function AgentsPage() {
           )
         })}
       </div>
+      </FadeIn>
     </div>
   )
 }

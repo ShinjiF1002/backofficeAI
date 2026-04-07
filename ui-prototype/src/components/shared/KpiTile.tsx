@@ -1,7 +1,7 @@
 import type { LucideIcon } from "lucide-react"
 import type { ReactNode } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Num } from "./Num"
+import { Card, CardContent } from "crystalline-ui"
+import { Num } from "crystalline-ui"
 import { cn } from "@/lib/utils"
 
 export type KpiTone = "indigo" | "emerald" | "amber" | "rose" | "violet" | "teal" | "slate"

@@ -1,20 +1,28 @@
-import { useNavigate } from 'react-router-dom'
-import type { Workflow } from '@/data/types'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
+import { useNavigate } from "react-router-dom";
+import type { Workflow } from "@/data/types";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from '@/components/ui/table'
-import { AlertTriangle } from 'lucide-react'
-import { TrustModeBadge } from '@/components/shared/TrustModeBadge'
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  Badge,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "crystalline-ui";
+import { AlertTriangle } from "lucide-react";
+import { TrustModeBadge } from "@/components/shared/TrustModeBadge";
 
 interface WorkflowTableProps {
-  workflows: Workflow[]
+  workflows: Workflow[];
 }
 
 export default function WorkflowTable({ workflows }: WorkflowTableProps) {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <Card>
@@ -33,9 +41,9 @@ export default function WorkflowTable({ workflows }: WorkflowTableProps) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {workflows.map(wf => {
-              const isReady = wf.recommendation.kind === 'ready_to_upgrade'
-              const isDemoted = wf.recommendation.kind === 'demoted'
+            {workflows.map((wf) => {
+              const isReady = wf.recommendation.kind === "ready_to_upgrade";
+              const isDemoted = wf.recommendation.kind === "demoted";
               return (
                 <TableRow key={wf.id}>
                   <TableCell className="font-medium">
@@ -46,28 +54,38 @@ export default function WorkflowTable({ workflows }: WorkflowTableProps) {
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="text-right font-mono">{wf.accuracy}%</TableCell>
+                  <TableCell className="text-right font-mono">
+                    {wf.accuracy}%
+                  </TableCell>
                   <TableCell className="text-right">{wf.totalCases}</TableCell>
                   <TableCell>
                     <TrustModeBadge mode={wf.trustMode} />
                   </TableCell>
                   <TableCell>
                     {isReady ? (
-                      <Button size="sm" variant="default" onClick={() => navigate(`/upgrade?wf=${wf.id}`)}>
+                      <Button
+                        size="sm"
+                        variant="primary"
+                        onClick={() => navigate(`/upgrade?wf=${wf.id}`)}
+                      >
                         {wf.recommendation.label}
                       </Button>
                     ) : isDemoted ? (
-                      <Badge variant="destructive" className="text-xs">{wf.recommendation.label}</Badge>
+                      <Badge variant="destructive" className="text-xs">
+                        {wf.recommendation.label}
+                      </Badge>
                     ) : (
-                      <span className="text-sm text-muted-foreground">{wf.recommendation.label}</span>
+                      <span className="text-sm text-muted-foreground">
+                        {wf.recommendation.label}
+                      </span>
                     )}
                   </TableCell>
                 </TableRow>
-              )
+              );
             })}
           </TableBody>
         </Table>
       </CardContent>
     </Card>
-  )
+  );
 }

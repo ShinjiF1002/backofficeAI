@@ -1,19 +1,24 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { ShieldCheck, TrendingUp, AlertTriangle } from 'lucide-react'
+import { Card, CardContent, CardHeader, CardTitle } from "crystalline-ui";
+import { ShieldCheck, TrendingUp, AlertTriangle } from "lucide-react";
 
 interface UpgradeDetailProps {
-  workflowName: string
+  workflowName: string;
   reason: {
-    cleanRuns: number
-    accuracy: number
-    sendBacksLearned: number
-  }
-  safety: string
-  keepHuman: string[]
-  autoRun: string[]
+    cleanRuns: number;
+    accuracy: number;
+    sendBacksLearned: number;
+  };
+  safety: string;
+  keepHuman: string[];
+  autoRun: string[];
 }
 
-export default function UpgradeDetail({ reason, safety, keepHuman, autoRun }: UpgradeDetailProps) {
+export default function UpgradeDetail({
+  reason,
+  safety,
+  keepHuman,
+  autoRun,
+}: UpgradeDetailProps) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <Card>
@@ -49,11 +54,11 @@ export default function UpgradeDetail({ reason, safety, keepHuman, autoRun }: Up
         <CardContent className="space-y-3 text-sm">
           <div>
             <p className="text-muted-foreground mb-1">人間承認を維持:</p>
-            <p className="font-medium">{keepHuman.join(', ')}</p>
+            <p className="font-medium">{keepHuman.join(", ")}</p>
           </div>
           <div>
             <p className="text-muted-foreground mb-1">AI自動実行:</p>
-            <p className="font-medium">{autoRun.join(', ')}</p>
+            <p className="font-medium">{autoRun.join(", ")}</p>
           </div>
         </CardContent>
       </Card>
@@ -66,5 +71,5 @@ export default function UpgradeDetail({ reason, safety, keepHuman, autoRun }: Up
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

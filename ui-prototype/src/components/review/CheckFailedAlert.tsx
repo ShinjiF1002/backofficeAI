@@ -1,5 +1,5 @@
 import type { Check } from '@/data/types'
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
+import { Alert, AlertDescription, AlertTitle } from 'crystalline-ui'
 import { ShieldAlert } from 'lucide-react'
 
 interface CheckFailedAlertProps {

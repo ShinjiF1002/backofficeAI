@@ -1,5 +1,5 @@
 import type { Check } from '@/data/types'
-import { Badge } from '@/components/ui/badge'
+import { Badge } from 'crystalline-ui'
 import { CheckCircle2, XCircle } from 'lucide-react'
 
 interface ChecksListProps {
