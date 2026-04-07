@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/button'
+import { Button } from 'crystalline-ui'
 
 interface ReviewActionsProps {
   hasFailedCheck: boolean
@@ -18,7 +18,7 @@ export default function ReviewActions({
   if (hasFailedCheck) {
     return (
       <div className="flex flex-wrap gap-2 sm:gap-3">
-        <Button variant="outline" size="tap" onClick={onManualContinue ?? onApprove}>
+        <Button variant="secondary" size="tap" onClick={onManualContinue ?? onApprove}>
           手動で続行
         </Button>
         <Button variant="destructive" size="tap" onClick={onSendBack}>
@@ -33,10 +33,10 @@ export default function ReviewActions({
 
   return (
     <div className="flex flex-wrap gap-2 sm:gap-3">
-      <Button variant="brand" size="cta" onClick={onApprove}>
+      <Button variant="primary" size="cta" onClick={onApprove}>
         承認して次へ
       </Button>
-      <Button variant="outline" size="tap" onClick={onSendBack}>
+      <Button variant="secondary" size="tap" onClick={onSendBack}>
         差し戻し
       </Button>
     </div>

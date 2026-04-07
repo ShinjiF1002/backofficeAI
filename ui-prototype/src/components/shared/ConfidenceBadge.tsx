@@ -1,4 +1,4 @@
-import { StatusPill, type StatusPillTone } from "@/components/ui/status-pill"
+import { StatusPill, type StatusTone } from "crystalline-ui"
 
 interface ConfidenceBadgeProps {
   confidence: number
@@ -12,10 +12,10 @@ interface ConfidenceBadgeProps {
  * - <70%: 赤（慎重確認）
  */
 export default function ConfidenceBadge({ confidence, size = 'sm' }: ConfidenceBadgeProps) {
-  const tone: StatusPillTone =
-    confidence >= 90 ? 'emerald' :
-    confidence >= 70 ? 'amber' :
-    'rose'
+  const tone: StatusTone =
+    confidence >= 90 ? 'success' :
+    confidence >= 70 ? 'warning' :
+    'danger'
 
   const sizeClasses = {
     sm: '',

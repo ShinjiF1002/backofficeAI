@@ -1,5 +1,5 @@
-import { Card, CardContent } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { Card, CardContent } from 'crystalline-ui'
+import { Button } from 'crystalline-ui'
 import { Quote } from 'lucide-react'
 
 interface SimilarNoteProps {

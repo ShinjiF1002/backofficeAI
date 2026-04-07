@@ -1,6 +1,6 @@
 import type { Task, Step } from '@/data/types'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardHeader, CardTitle } from 'crystalline-ui'
+import { Badge } from 'crystalline-ui'
 import ChecksList from './ChecksList'
 import ScreenshotPlaceholder from './ScreenshotPlaceholder'
 import { Target, CheckSquare } from 'lucide-react'

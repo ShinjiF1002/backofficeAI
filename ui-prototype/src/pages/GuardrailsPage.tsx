@@ -1,16 +1,17 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { StatusPill, type StatusPillTone } from '@/components/ui/status-pill'
-import PageHeader from '@/components/shared/PageHeader'
+import {
+  Card, CardContent, CardHeader, CardTitle,
+  Badge, Alert, AlertDescription,
+  StatusPill, type StatusTone,
+  Heading, Text, FadeIn,
+} from 'crystalline-ui'
 import { KpiTile } from '@/components/shared/KpiTile'
 import { guardrails } from '@/data/mockData'
 import { guardrailSeverityLabels, type GuardrailSeverity } from '@/data/types'
 import { Info, ShieldCheck, ShieldAlert } from 'lucide-react'
 
-const severityTone: Record<GuardrailSeverity, StatusPillTone> = {
-  error: 'rose',
-  warning: 'amber',
+const severityTone: Record<GuardrailSeverity, StatusTone> = {
+  error: 'danger',
+  warning: 'warning',
 }
 
 export default function GuardrailsPage() {
@@ -19,40 +20,45 @@ export default function GuardrailsPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader
-        title="チェックルール（ガードレール）"
-        subtitle="AI の判断を自動検証するルール。業務の正確性を担保します。"
-      />
+      <FadeIn>
+        <Heading as="h1">チェックルール（ガードレール）</Heading>
+        <Text muted>AI の判断を自動検証するルール。業務の正確性を担保します。</Text>
+      </FadeIn>
 
-      <Alert variant="info">
-        <Info className="h-4 w-4" />
-        <AlertDescription className="text-sm leading-[1.4]">
-          チェックルールは <strong>手順定義（Tier 2）</strong>と同様、どんな変更も人間の承認が必須です。
-          ルール違反を検出した場合、ブロック（処理停止）または警告（確認表示）のいずれかを実施します。
-        </AlertDescription>
-      </Alert>
+      <FadeIn index={1}>
+        <Alert variant="info">
+          <Info className="h-4 w-4" />
+          <AlertDescription className="text-sm leading-[1.4]">
+            チェックルールは <strong>手順定義（Tier 2）</strong>と同様、どんな変更も人間の承認が必須です。
+            ルール違反を検出した場合、ブロック（処理停止）または警告（確認表示）のいずれかを実施します。
+          </AlertDescription>
+        </Alert>
+      </FadeIn>
 
-      {/* Summary */}
-      <div className="grid grid-cols-2 gap-3">
-        <KpiTile
-          label="ブロック"
-          value={errorCount}
-          unit="件"
-          icon={ShieldAlert}
-          tone="rose"
-          hint="違反時に処理を停止"
-        />
-        <KpiTile
-          label="警告"
-          value={warningCount}
-          unit="件"
-          icon={ShieldCheck}
-          tone="amber"
-          hint="確認を促すが処理は継続"
-        />
-      </div>
+      <FadeIn index={2}>
+        {/* Summary */}
+        <div className="grid grid-cols-2 gap-3">
+          <KpiTile
+            label="ブロック"
+            value={errorCount}
+            unit="件"
+            icon={ShieldAlert}
+            tone="rose"
+            hint="違反時に処理を停止"
+          />
+          <KpiTile
+            label="警告"
+            value={warningCount}
+            unit="件"
+            icon={ShieldCheck}
+            tone="amber"
+            hint="確認を促すが処理は継続"
+          />
+        </div>
+      </FadeIn>
 
       {/* Guardrails list */}
+      <FadeIn index={3}>
       <Card>
         <CardHeader className="pb-3">
           <CardTitle className="text-base leading-[1.4]">適用中のチェックルール</CardTitle>
@@ -98,6 +104,7 @@ export default function GuardrailsPage() {
           </div>
         </CardContent>
       </Card>
+      </FadeIn>
     </div>
   )
 }

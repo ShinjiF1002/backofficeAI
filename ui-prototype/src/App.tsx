@@ -1,25 +1,25 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { AppProvider } from '@/context/AppContext'
-import AppLayout from '@/components/layout/AppLayout'
-import HomePage from '@/pages/HomePage'
-import ExecuteReviewPage from '@/pages/ExecuteReviewPage'
-import CommentPage from '@/pages/CommentPage'
-import ProposalReviewPage from '@/pages/ProposalReviewPage'
-import LearningStatusPage from '@/pages/LearningStatusPage'
-import UpgradePage from '@/pages/UpgradePage'
-import OverviewPage from '@/pages/OverviewPage'
-import HowItWorksPage from '@/pages/HowItWorksPage'
-import RepositoryPage from '@/pages/RepositoryPage'
-import RunHistoryPage from '@/pages/RunHistoryPage'
-import GuardrailsPage from '@/pages/GuardrailsPage'
-import AgentsPage from '@/pages/AgentsPage'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AppProvider } from "@/context/AppContext";
+import CrystallineLayout from "@/components/layout/CrystallineLayout";
+import HomePage from "@/pages/HomePage";
+import ExecuteReviewPage from "@/pages/ExecuteReviewPage";
+import CommentPage from "@/pages/CommentPage";
+import ProposalReviewPage from "@/pages/ProposalReviewPage";
+import LearningStatusPage from "@/pages/LearningStatusPage";
+import UpgradePage from "@/pages/UpgradePage";
+import OverviewPage from "@/pages/OverviewPage";
+import HowItWorksPage from "@/pages/HowItWorksPage";
+import RepositoryPage from "@/pages/RepositoryPage";
+import RunHistoryPage from "@/pages/RunHistoryPage";
+import GuardrailsPage from "@/pages/GuardrailsPage";
+import AgentsPage from "@/pages/AgentsPage";
 
 export default function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <AppProvider>
         <Routes>
-          <Route element={<AppLayout />}>
+          <Route element={<CrystallineLayout />}>
             <Route path="/" element={<OverviewPage />} />
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/repository" element={<RepositoryPage />} />
@@ -36,5 +36,5 @@ export default function App() {
         </Routes>
       </AppProvider>
     </BrowserRouter>
-  )
+  );
 }

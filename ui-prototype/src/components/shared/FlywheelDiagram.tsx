@@ -1,5 +1,5 @@
 import { MessageSquare, Lightbulb, GitPullRequest, FileCheck, ArrowRight } from 'lucide-react'
-import { Num } from './Num'
+import { Num } from 'crystalline-ui'
 import { flywheelStageColors, type FlywheelStage } from './flywheel-colors'
 
 interface FlywheelDiagramProps {

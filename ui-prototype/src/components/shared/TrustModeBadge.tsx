@@ -1,23 +1,24 @@
-import type { TrustMode } from "@/data/types"
-import { trustModeLabels } from "@/data/types"
-import { StatusPill, type StatusPillTone } from "@/components/ui/status-pill"
+import type { TrustMode } from "@/data/types";
+import { trustModeLabels } from "@/data/types";
+import { StatusPill } from "crystalline-ui";
+import type { StatusTone } from "crystalline-ui";
 
 interface TrustModeBadgeProps {
-  mode: TrustMode
+  mode: TrustMode;
 }
 
 /**
  * Trust-mode pill with locked semantic color mapping (architecture.md §4):
- * - supervised  → slate  (most restrictive, neutral)
- * - checkpoint  → indigo (brand, partial autonomy)
- * - autonomous  → emerald (trusted, fully delegated)
+ * - supervised  → neutral  (most restrictive, neutral)
+ * - checkpoint  → info (brand, partial autonomy)
+ * - autonomous  → success (trusted, fully delegated)
  */
-const modeTone: Record<TrustMode, StatusPillTone> = {
-  supervised: "slate",
-  checkpoint: "indigo",
-  autonomous: "emerald",
-}
+const modeTone: Record<TrustMode, StatusTone> = {
+  supervised: "neutral",
+  checkpoint: "info",
+  autonomous: "success",
+};
 
 export function TrustModeBadge({ mode }: TrustModeBadgeProps) {
-  return <StatusPill tone={modeTone[mode]}>{trustModeLabels[mode]}</StatusPill>
+  return <StatusPill tone={modeTone[mode]}>{trustModeLabels[mode]}</StatusPill>;
 }

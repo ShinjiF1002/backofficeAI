@@ -1,257 +1,228 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import "crystalline-ui/variables";
+
+/* Scan crystalline-ui dist for Tailwind class usage (node_modules excluded by default) */
+@source "../node_modules/crystalline-ui/dist";
 @import "@fontsource-variable/inter";
 @import "@fontsource-variable/noto-sans-jp";
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-    /* Fonts */
-    --font-heading: var(--font-sans);
-    --font-sans: 'Inter Variable', 'Noto Sans JP Variable', system-ui, sans-serif;
-    --font-num: 'Inter Variable', ui-monospace, monospace;
+  /* Fonts */
+  --font-heading: var(--font-sans);
+  --font-sans: "Inter Variable", "Noto Sans JP Variable", system-ui, sans-serif;
+  --font-num: "Inter Variable", ui-monospace, monospace;
 
-    /* Color token → Tailwind utility mappings */
-    --color-sidebar-ring: var(--sidebar-ring);
-    --color-sidebar-border: var(--sidebar-border);
-    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-    --color-sidebar-accent: var(--sidebar-accent);
-    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-    --color-sidebar-primary: var(--sidebar-primary);
-    --color-sidebar-foreground: var(--sidebar-foreground);
-    --color-sidebar: var(--sidebar);
-    --color-chart-5: var(--chart-5);
-    --color-chart-4: var(--chart-4);
-    --color-chart-3: var(--chart-3);
-    --color-chart-2: var(--chart-2);
-    --color-chart-1: var(--chart-1);
-    --color-ring: var(--ring);
-    --color-input: var(--input);
-    --color-border: var(--border);
-    --color-destructive: var(--destructive);
-    --color-accent-foreground: var(--accent-foreground);
-    --color-accent: var(--accent);
-    --color-muted-foreground: var(--muted-foreground);
-    --color-muted: var(--muted);
-    --color-secondary-foreground: var(--secondary-foreground);
-    --color-secondary: var(--secondary);
-    --color-primary-foreground: var(--primary-foreground);
-    --color-primary: var(--primary);
-    --color-popover-foreground: var(--popover-foreground);
-    --color-popover: var(--popover);
-    --color-card-foreground: var(--card-foreground);
-    --color-card: var(--card);
-    --color-foreground: var(--foreground);
-    --color-background: var(--background);
+  /* Color token → Tailwind utility mappings */
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
 
-    /* Semantic colors (new, exposed as Tailwind utilities) */
-    --color-success: var(--success);
-    --color-warning: var(--warning);
-    --color-danger: var(--danger);
-    --color-tier-1: var(--tier-1);
-    --color-tier-2: var(--tier-2);
+  /* Semantic colors */
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-tier-1: var(--tier-1);
+  --color-tier-2: var(--tier-2);
 
-    /* Radius scale (unchanged) */
-    --radius-sm: calc(var(--radius) * 0.6);
-    --radius-md: calc(var(--radius) * 0.8);
-    --radius-lg: var(--radius);
-    --radius-xl: calc(var(--radius) * 1.4);
-    --radius-2xl: calc(var(--radius) * 1.8);
-    --radius-3xl: calc(var(--radius) * 2.2);
-    --radius-4xl: calc(var(--radius) * 2.6);
+  /* Radius scale */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
 
-    /* Premium shadow tokens */
-    --shadow-premium-sm: 0 1px 2px rgba(15,23,42,0.02), 0 2px 8px rgba(15,23,42,0.04);
-    --shadow-premium-md: 0 4px 6px -1px rgba(15,23,42,0.02), 0 10px 24px -3px rgba(15,23,42,0.04), 0 0 0 1px rgba(15,23,42,0.02);
-    --shadow-premium-lg: 0 10px 15px -3px rgba(15,23,42,0.03), 0 25px 40px -12px rgba(15,23,42,0.05), 0 0 0 1px rgba(15,23,42,0.02);
-    --shadow-cta: 0 4px 14px 0 rgba(79,70,229,0.25);
-    --shadow-inner-glow: inset 0 1px 0 0 rgba(255,255,255,0.6);
+  /* Shadow tokens — use Crystalline crystal-* names */
+  --shadow-crystal-sm: var(--shadow-crystal-sm);
+  --shadow-crystal-md: var(--shadow-crystal-md);
+  --shadow-crystal-lg: var(--shadow-crystal-lg);
+  --shadow-cta: 0 4px 14px 0 rgba(79, 70, 229, 0.25);
+
+  /* Legacy aliases for gradual migration */
+  --shadow-premium-sm: var(--shadow-crystal-sm);
+  --shadow-premium-md: var(--shadow-crystal-md);
+  --shadow-premium-lg: var(--shadow-crystal-lg);
 }
 
 :root {
-    /* Canvas & surfaces */
-    --background: oklch(0.985 0.003 240);      /* ≈ #F8F9FA canvas */
-    --foreground: oklch(0.18 0.02 250);         /* slate-900 body */
-    --card: oklch(1 0 0);                        /* pure white */
-    --card-foreground: oklch(0.18 0.02 250);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.18 0.02 250);
+  /* White background override */
+  --background: oklch(1 0 0);
 
-    /* Brand */
-    --primary: oklch(0.52 0.23 275);             /* ≈ #4F46E5 indigo-600 */
-    --primary-foreground: oklch(1 0 0);
-    --primary-gradient-to: oklch(0.58 0.24 293); /* ≈ #7C3AED violet-600 */
-    --accent: oklch(0.58 0.22 293);              /* violet (reserved for Tier-2 accent only) */
-    --accent-foreground: oklch(1 0 0);
-
-    /* Neutrals */
-    --secondary: oklch(0.97 0.004 250);
-    --secondary-foreground: oklch(0.18 0.02 250);
-    --muted: oklch(0.97 0.004 250);              /* slate-50 */
-    --muted-foreground: oklch(0.42 0.02 250);    /* slate-600 (≥4.5:1 on canvas) */
-    --border: oklch(0.92 0.004 250);             /* slate-200 */
-    --input: oklch(0.92 0.004 250);
-
-    /* Semantic */
-    --success: oklch(0.67 0.17 148);             /* emerald-500 */
-    --warning: oklch(0.75 0.16 70);              /* amber-500 */
-    --danger: oklch(0.64 0.21 25);               /* rose-500 */
-    --destructive: oklch(0.64 0.21 25);          /* alias of danger (shadcn expectation) */
-
-    /* Architecture concept colors (locked, architecture.md §2) */
-    --tier-1: oklch(0.65 0.10 182);              /* teal — knowledge */
-    --tier-2: oklch(0.45 0.02 250);              /* slate-700 — procedures/guardrails */
-
-    /* Charts (recharts picks these up if referenced) */
-    --chart-1: oklch(0.52 0.23 275);
-    --chart-2: oklch(0.58 0.22 293);
-    --chart-3: oklch(0.67 0.17 148);
-    --chart-4: oklch(0.75 0.16 70);
-    --chart-5: oklch(0.65 0.10 182);
-
-    --ring: oklch(0.52 0.23 275 / 0.25);
-    --radius: 0.625rem;
-
-    /* Sidebar */
-    --sidebar: oklch(1 0 0);
-    --sidebar-foreground: oklch(0.18 0.02 250);
-    --sidebar-primary: oklch(0.52 0.23 275);
-    --sidebar-primary-foreground: oklch(1 0 0);
-    --sidebar-accent: oklch(0.97 0.004 250);
-    --sidebar-accent-foreground: oklch(0.18 0.02 250);
-    --sidebar-border: oklch(0.92 0.004 250);
-    --sidebar-ring: oklch(0.52 0.23 275 / 0.25);
+  /* Architecture concept colors (LOCKED, architecture.md §2) */
+  --tier-1: oklch(0.65 0.1 182); /* teal — knowledge */
+  --tier-2: oklch(0.45 0.02 250); /* slate-700 — procedures/guardrails */
 }
 
 @layer base {
-    * {
-        @apply border-border outline-ring/50;
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    font-feature-settings: "palt" 1;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  .tabular-nums {
+    font-feature-settings:
+      "palt" 0,
+      "tnum" 1;
+  }
+  em {
+    font-style: normal;
+    font-weight: 600;
+    color: inherit;
+  }
+  ::selection {
+    background-color: color-mix(in oklab, var(--primary) 15%, transparent);
+    color: var(--primary);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
     }
-    html {
-        @apply font-sans;
-        /* `palt` enables proportional kerning for JP glyphs (kana tighter).
-           Scoped off inside .tabular-nums to preserve Latin digit alignment. */
-        font-feature-settings: "palt" 1;
+    .hover-lift:hover {
+      transform: none !important;
     }
-    body {
-        @apply bg-background text-foreground antialiased;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-    }
-    /* Reset palt for tabular numerics — keeps Latin digit alignment accurate */
-    .tabular-nums {
-        font-feature-settings: "palt" 0, "tnum" 1;
-    }
-    /* JP glyphs don't italicize cleanly — reset em globally */
-    em {
-        font-style: normal;
-        font-weight: 600;
-        color: inherit;
-    }
-    ::selection {
-        background-color: color-mix(in oklab, var(--primary) 15%, transparent);
-        color: var(--primary);
-    }
-    /* Respect user's motion preference */
-    @media (prefers-reduced-motion: reduce) {
-        *,
-        *::before,
-        *::after {
-            animation-duration: 0.01ms !important;
-            animation-iteration-count: 1 !important;
-            transition-duration: 0.01ms !important;
-            scroll-behavior: auto !important;
-        }
-        .hover-lift:hover {
-            transform: none !important;
-        }
-    }
-    /* Custom scrollbar (Mac-like) */
-    ::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-    }
-    ::-webkit-scrollbar-track {
-        background: transparent;
-    }
-    ::-webkit-scrollbar-thumb {
-        background: oklch(0.82 0.01 250);
-        border-radius: 10px;
-        border: 2px solid transparent;
-        background-clip: padding-box;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-        background: oklch(0.62 0.02 250);
-        border: 2px solid transparent;
-        background-clip: padding-box;
-    }
+  }
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: oklch(0.82 0.01 250);
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.62 0.02 250);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
 }
 
 @layer utilities {
-    /* Canvas background with extremely subtle noise texture */
-    .bg-canvas {
-        background-color: var(--background);
-        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.015'/%3E%3C/svg%3E");
-    }
+  /* Canvas background with subtle noise texture */
+  .bg-canvas {
+    background-color: var(--background);
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.015'/%3E%3C/svg%3E");
+  }
 
-    /* Glass panel (for sticky TopBar, mobile bottom bars) */
-    .glass-panel {
-        background: rgba(255, 255, 255, 0.75);
-        backdrop-filter: blur(16px) saturate(180%);
-        -webkit-backdrop-filter: blur(16px) saturate(180%);
-        border-bottom: 1px solid rgba(226, 232, 240, 0.6);
-    }
+  /* Glass panel — now uses Crystalline variable with fallback */
+  .glass-panel {
+    background: var(--glass-panel, rgba(255, 255, 255, 0.75));
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+  }
 
-    /* Card hover elevation */
-    .hover-lift {
-        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-                    box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
-                    border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    .hover-lift:hover {
-        transform: translateY(-2px);
-        box-shadow: var(--shadow-premium-md);
-        border-color: color-mix(in oklab, var(--primary) 20%, transparent);
-    }
+  /* Card hover elevation — uses crystal shadow */
+  .hover-lift {
+    transition:
+      transform 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-crystal-md);
+    border-color: color-mix(in oklab, var(--primary) 20%, transparent);
+  }
 
-    /* Indigo→violet gradient text */
-    .text-gradient-brand {
-        background: linear-gradient(90deg, var(--primary) 0%, var(--primary-gradient-to) 100%);
-        background-clip: text;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        color: transparent;
-    }
+  /* Gradient text */
+  .text-gradient-brand {
+    background: linear-gradient(
+      90deg,
+      var(--primary) 0%,
+      var(--primary-gradient-to) 100%
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
 
-    /* Font family utility (numeric-only runs) */
-    .font-num {
-        font-family: var(--font-num);
-    }
+  .font-num {
+    font-family: var(--font-num);
+  }
 
-    /* Active progress bar shimmer */
-    @keyframes progress-shimmer {
-        0% { background-position: 200% 0; }
-        100% { background-position: -200% 0; }
+  /* Active progress bar shimmer */
+  @keyframes progress-shimmer {
+    0% {
+      background-position: 200% 0;
     }
-    .progress-shimmer-bar {
-        background: linear-gradient(
-            90deg,
-            var(--primary) 0%,
-            var(--primary-gradient-to) 50%,
-            var(--primary) 100%
-        );
-        background-size: 200% 100%;
-        animation: progress-shimmer 2.5s infinite linear;
+    100% {
+      background-position: -200% 0;
     }
+  }
+  .progress-shimmer-bar {
+    background: linear-gradient(
+      90deg,
+      var(--primary) 0%,
+      var(--primary-gradient-to) 50%,
+      var(--primary) 100%
+    );
+    background-size: 200% 100%;
+    animation: progress-shimmer 2.5s infinite linear;
+  }
 
-    /* Pulsing ring for live-status indicators */
-    @keyframes pulse-ring {
-        0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.5); }
-        70% { box-shadow: 0 0 0 6px rgba(79, 70, 229, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
+  /* Pulsing ring for live-status indicators */
+  @keyframes pulse-ring {
+    0% {
+      box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.5);
     }
-    .animate-pulse-ring {
-        animation: pulse-ring 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+    70% {
+      box-shadow: 0 0 0 6px rgba(79, 70, 229, 0);
     }
+    100% {
+      box-shadow: 0 0 0 0 rgba(79, 70, 229, 0);
+    }
+  }
+  .animate-pulse-ring {
+    animation: pulse-ring 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+  }
 }

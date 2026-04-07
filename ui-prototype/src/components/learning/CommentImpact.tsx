@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from 'crystalline-ui'
 import { ArrowRight } from 'lucide-react'
 
 interface CommentImpactProps {
